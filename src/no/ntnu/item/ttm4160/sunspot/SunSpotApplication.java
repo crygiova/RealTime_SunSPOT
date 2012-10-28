@@ -52,7 +52,17 @@ public class SunSpotApplication extends MIDlet {
 
         /*
          * Instantiate the scheduler and the state machines, then start the scheduler.
-         */
+/*         */
+        
+  /*¤      Scheduler s = new Scheduler();
+        FSMClient client = new FSMClient("name");
+        
+        
+        
+        s.addFSM(client);
+        
+        s.loopfunction();
+     */   		
         
         
     }
