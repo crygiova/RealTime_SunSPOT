@@ -24,11 +24,36 @@ public class SpotTimer {
 	 */
 	public SpotTimer(String PID,String TID)
 	{
-		
+		this.PID=PID;
+		this.TID= TID;
+		startingTime=0;
+		delay=0;
+		timeout=0;
 	}
 
 	
-
+	public boolean start(long delay)
+	{
+		startingTime=System.currentTimeMillis();
+		this.delay =delay;
+		timeout = startingTime +delay;
+		return true;
+	}
+	
+	public boolean reset()
+	{
+		//TODO implement
+		return true;
+	}
+	
+	public boolean stop()
+	{
+		//TODO IMPLEMENT
+		return true;
+		
+	}
+	
+	
 	/**
 	 * @return the pID
 	 */
@@ -68,7 +93,6 @@ public class SpotTimer {
 		return startingTime;
 	}
 
-
 	/**
 	 * @param startingTime the startingTime to set
 	 */
@@ -82,14 +106,6 @@ public class SpotTimer {
 	 */
 	public long getTimeout() {
 		return timeout;
-	}
-
-
-	/**
-	 * @param timeout the timeout to set
-	 */
-	public void setTimeout(long timeout) {
-		this.timeout = timeout;
 	}
 
 

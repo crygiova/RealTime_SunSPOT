@@ -13,8 +13,10 @@ import com.sun.spot.util.Queue;
  *
  */
 public abstract class StateMachine {
-
-	protected final State initialState = new State("Init");
+	
+	protected final String INIT_ST = "init";
+	
+	protected final State initialState = new State(INIT_ST,0);
 	
 	protected String ID;
 	protected Queue inputQueue;
@@ -65,10 +67,7 @@ public abstract class StateMachine {
 	 *  after the arrival o a input makes a transition in the state machine
 	 * @param msg
 	 */
-	public void transition(Message msg)
-	{
-		
-	}
+	public abstract void transition(Message msg);
 	
 	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID shold be a final variable,bc we know the names of our timers
 	{
