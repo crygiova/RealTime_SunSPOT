@@ -43,6 +43,7 @@ public class ClientFSM extends StateMachine {
 
 	public void transition(Message msg) {
 		Message out;
+		//TODO input queue & saved message queue?? teke a loog on the teory
 		switch(this.currentState.getIdName())
 		{	
 			case 0://init status
@@ -52,6 +53,7 @@ public class ClientFSM extends StateMachine {
 				if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
 				{
 					out = new Message(getMySender(),msg.getSender(),Message.ICanDisplayReadings);//sending the message to response I can display ur readings
+					communicate.sendRemoteMessage(out);//sending the out message
 					this.currentState=this.wait_app;
 				}
 				break;
@@ -70,15 +72,50 @@ public class ClientFSM extends StateMachine {
 					else 
 					if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
 					{
-//							this.saveMsgQueue.
+							this.saveMsgQueue.put(msg);//put in the save message queue the msg
 					}
-					
-					
-					
 				}
-					
 				break;
 			case 3://busy status
+				
+				if(msg.getContent().compareTo(Message.SenderDisconnect)==0)//if sender disconnect
+				{
+					//TODO stop timer
+					//TODO blink led
+					this.currentState=this.free;
+				}
+				else if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
+				{
+					//TODO stop timer
+					// ReceiverDisconnect message
+					out = new Message(getMySender(),msg.getSender(),Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
+					communicate.sendRemoteMessage(out);//sending the out message
+					//TODO blink led
+					//new stase
+					this.currentState= this.free;
+				}
+			/* TODO timeout timer
+			 * 	else 
+				if(msg.getContent().compareTo(Message.))
+				{
+					this.currentState=this.free;
+				}
+				*/
+				else { //probably in reading or nothing
+					int indexMsg, index;
+					index=msg.getContent().indexOf(":");
+					indexMsg=Message.Reading.indexOf(":");
+					
+					if(index!=-1 && indexMsg!=-1) //it's a reading message
+					{
+						if(msg.getContent().substring(0, index).compareTo(Message.Reading.substring(0, indexMsg))==0)//if is reading msg
+						{
+							//TODO display
+							//TODO reset timeout
+							this.currentState=this.busy;
+						}
+					}
+				}
 				break;
 		}
 		
