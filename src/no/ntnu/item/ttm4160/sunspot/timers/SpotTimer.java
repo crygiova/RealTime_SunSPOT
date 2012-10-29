@@ -8,7 +8,6 @@ package no.ntnu.item.ttm4160.sunspot.timers;
  *
  */
 public class SpotTimer {
-
 	
 	private String PID;
 	private String TID;

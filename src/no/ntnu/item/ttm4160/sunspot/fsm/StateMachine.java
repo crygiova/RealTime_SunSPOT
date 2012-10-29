@@ -3,7 +3,7 @@
  */
 package no.ntnu.item.ttm4160.sunspot.fsm;
 
-import no.ntnu.item.ttm4160.sunspot.communication.Message;
+import no.ntnu.item.ttm4160.sunspot.communication.*;
 import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
 
 import com.sun.spot.util.Queue;
@@ -22,7 +22,7 @@ public abstract class StateMachine {
 	protected Queue inputQueue;
 	protected Queue saveMsgQueue;
 	protected State currentState;
-
+	protected Communications communicate; 
 	
 	/**
 	 * @return the iD

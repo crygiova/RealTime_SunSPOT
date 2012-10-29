@@ -3,6 +3,10 @@
  */
 package no.ntnu.item.ttm4160.sunspot.fsm;
 
+import com.sun.spot.peripheral.Spot;
+import com.sun.spot.util.IEEEAddress;
+
+import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 
 /**
@@ -31,6 +35,8 @@ public class ServerFSM extends StateMachine {
 		send = new State(SEND_ST,3);
 		//setting the initial state
 		this.currentState=this.initialState;
+		//initialize the coomunications obj
+		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
 	}
 
 	public void transition(Message msg) {

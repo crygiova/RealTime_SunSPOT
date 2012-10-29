@@ -3,6 +3,10 @@
  */
 package no.ntnu.item.ttm4160.sunspot.fsm;
 
+import com.sun.spot.peripheral.Spot;
+import com.sun.spot.util.IEEEAddress;
+
+import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 
 /**
@@ -33,20 +37,56 @@ public class ClientFSM extends StateMachine {
 		busy = new State(BUSY_ST,3);
 		//setting up the initial state
 		this.currentState= this.initialState;//TODO don't know actually if this is correct or not
+		//initialize the coomunications obj
+		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
 	}
 
 	public void transition(Message msg) {
-		// TODO Auto-generated method stub
+		Message out;
 		switch(this.currentState.getIdName())
 		{	
-			case 0:
+			case 0://init status
+				//subscribe button 2
 				break;
-			case 1:
+			case 1://free status
+				if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
+				{
+					out = new Message(getMySender(),msg.getSender(),Message.ICanDisplayReadings);//sending the message to response I can display ur readings
+					this.currentState=this.wait_app;
+				}
 				break;
-			case 2:
+			case 2://wait approved status
+				if(msg.getContent().compareTo(Message.Approved)==0)
+				{
+					//TODO start timeout
+					this.currentState = this.busy;
+				}
+				else
+				{
+					if(msg.getContent().compareTo(Message.Denied)==0)
+					{
+						this.currentState= this.free;
+					}
+					else 
+					if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
+					{
+//							this.saveMsgQueue.
+					}
+					
+					
+					
+				}
+					
 				break;
-			case 3:
+			case 3://busy status
 				break;
 		}
+		
+		
+	}
+	
+	private String getMySender()
+	{
+		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex()+":"+this.ID;
 	}
 }
