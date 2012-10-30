@@ -6,11 +6,9 @@ package no.ntnu.item.ttm4160.sunspot;
 import java.io.IOException;
 
 import com.sun.spot.sensorboard.EDemoBoard;
-import com.sun.spot.sensorboard.peripheral.ISwitch;
 import com.sun.spot.sensorboard.peripheral.ITriColorLED;
 import com.sun.spot.sensorboard.peripheral.LEDColor;
 import com.sun.spot.sensorboard.peripheral.LightSensor;
-import com.sun.spot.sensorboard.peripheral.TemperatureInput;
 import com.sun.spot.util.Utils;
 
 /**

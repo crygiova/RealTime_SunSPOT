@@ -3,9 +3,12 @@
  */
 package no.ntnu.item.ttm4160.sunspot.fsm;
 
+import java.io.IOException;
+
 import com.sun.spot.peripheral.Spot;
 import com.sun.spot.util.IEEEAddress;
 
+import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 
@@ -23,6 +26,8 @@ public class ServerFSM extends StateMachine {
 	private State ready;
 	private State wait_resp;
 	private State send;
+	
+	private String receiver;
 	/**
 	 * 
 	 */
@@ -39,21 +44,69 @@ public class ServerFSM extends StateMachine {
 		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
 	}
 
-	public void transition(Message msg) {
-		// TODO Auto-generated method stub
-		
+	public void transition(Message msg) throws IOException {
+		Message out;
 		switch(this.currentState.getIdName())
 		{	
-			case 0:
+			case 0://init status
+				//subscribe button 2
+				//subscribe button 1
 				break;
-			case 1:
+			case 1://ready status
+				if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
+				{
+					//TODO set up timer 500 ms
+					out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
+					communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
+					this.currentState=this.wait_resp;
+				}
 				break;
-			case 2:
+			case 2://wait_response
+				//TODO denied message
+				if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
+				{
+					out = new Message(getMySender(),msg.getSender(),Message.Approved);
+					communicate.sendRemoteMessage(out);//sending approved message
+					receiver = msg.getSender();//
+					//TODO starting again timer
+					this.currentState=this.send;
+				}
+				/*else 
+				if()//TODO give up timer
+				{
+					SunSpotUtil.blinkLeds();
+					this.currentState=this.ready;
+				}*/
 				break;
-			case 3:
+			case 3://sending
+/*			//	if()//TODO send again timer
+				{
+					//start send again timer 100 ms
+					int result = SunSpotUtil.getLightAvg();//reading the light sensors
+					out = new Message(getMySender(),receiver,Message.Reading+result);
+					communicate.sendRemoteMessage(out);
+					this.currentState= this.send;
+				}*/
+			// TODO	else
+					if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
+					{
+						out = new Message(getMySender(),msg.getSender(),Message.SenderDisconnect);
+						communicate.sendRemoteMessage(out);
+						SunSpotUtil.blinkLeds();
+						this.currentState=this.ready;
+					}
+					else if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
+					{
+						if(receiver.compareTo(msg.getReceiver())==0)//if I receive the disconnect from my receiver
+						{
+							//TODO stop timer send again
+							SunSpotUtil.blinkLeds();
+							this.currentState=this.ready;
+						}
+						
+					}
 				break;
-								
-		
+				
 		}
 	}
 

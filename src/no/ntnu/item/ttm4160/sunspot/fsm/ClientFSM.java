@@ -6,6 +6,7 @@ package no.ntnu.item.ttm4160.sunspot.fsm;
 import com.sun.spot.peripheral.Spot;
 import com.sun.spot.util.IEEEAddress;
 
+import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 
@@ -24,6 +25,7 @@ public class ClientFSM extends StateMachine {
 	private State wait_app;
 	private State busy;
 
+	private String receiver;
 
 	/**
 	 * 
@@ -43,7 +45,7 @@ public class ClientFSM extends StateMachine {
 
 	public void transition(Message msg) {
 		Message out;
-		//TODO input queue & saved message queue?? teke a loog on the teory
+		//TODO input queue & saved message queue?? take a look in the teory
 		switch(this.currentState.getIdName())
 		{	
 			case 0://init status
@@ -62,6 +64,7 @@ public class ClientFSM extends StateMachine {
 				{
 					//TODO start timeout
 					this.currentState = this.busy;
+					receiver = msg.getSender();
 				}
 				else
 				{
@@ -80,9 +83,12 @@ public class ClientFSM extends StateMachine {
 				
 				if(msg.getContent().compareTo(Message.SenderDisconnect)==0)//if sender disconnect
 				{
-					//TODO stop timer
-					//TODO blink led
-					this.currentState=this.free;
+					if(msg.getSender().compareTo(receiver)==0)
+					{
+						//TODO stop timer
+						//TODO blink led
+						this.currentState=this.free;
+					}
 				}
 				else if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
 				{
@@ -101,7 +107,8 @@ public class ClientFSM extends StateMachine {
 					this.currentState=this.free;
 				}
 				*/
-				else { //probably in reading or nothing
+				else 
+				{	//probably in reading or nothing
 					int indexMsg, index;
 					index=msg.getContent().indexOf(":");
 					indexMsg=Message.Reading.indexOf(":");
@@ -110,8 +117,9 @@ public class ClientFSM extends StateMachine {
 					{
 						if(msg.getContent().substring(0, index).compareTo(Message.Reading.substring(0, indexMsg))==0)//if is reading msg
 						{
-							//TODO display
-							//TODO reset timeout
+							int result = Integer.parseInt(msg.getContent().substring(index+1, msg.getContent().length()-1));//verifica che il meno uno que sia corretto quando estrai il number
+							SunSpotUtil.lightToLeds(result);//TODO display
+							//TODO reset timeout 500ms
 							this.currentState=this.busy;
 						}
 					}
@@ -120,10 +128,5 @@ public class ClientFSM extends StateMachine {
 		}
 		
 		
-	}
-	
-	private String getMySender()
-	{
-		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex()+":"+this.ID;
 	}
 }

@@ -3,9 +3,13 @@
  */
 package no.ntnu.item.ttm4160.sunspot.fsm;
 
+import java.io.IOException;
+
 import no.ntnu.item.ttm4160.sunspot.communication.*;
 import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
 
+import com.sun.spot.peripheral.Spot;
+import com.sun.spot.util.IEEEAddress;
 import com.sun.spot.util.Queue;
 
 /**
@@ -66,13 +70,19 @@ public abstract class StateMachine {
 	 * This function is the main function of a state machine that,
 	 *  after the arrival o a input makes a transition in the state machine
 	 * @param msg
+	 * @throws IOException 
 	 */
-	public abstract void transition(Message msg);
+	public abstract void transition(Message msg) throws IOException;
 	
 	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID shold be a final variable,bc we know the names of our timers
 	{
 		return new SpotTimer(this.ID,timerID);
 		
+	}
+	
+	protected String getMySender()
+	{
+		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex()+":"+this.ID;
 	}
 	
 	
