@@ -4,9 +4,11 @@
 package no.ntnu.item.ttm4160.sunspot.fsm;
 
 import com.sun.spot.peripheral.Spot;
+import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.util.IEEEAddress;
 
 import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
+import no.ntnu.item.ttm4160.sunspot.communication.ButtonListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 
@@ -38,9 +40,11 @@ public class ClientFSM extends StateMachine {
 		wait_app = new State(WAIT_ST,2);
 		busy = new State(BUSY_ST,3);
 		//setting up the initial state
-		this.currentState= this.initialState;//TODO don't know actually if this is correct or not
+		this.currentState= this.initialState;
 		//initialize the coomunications obj
 		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
+		//first transition from init to Free
+		this.transition(null);
 	}
 
 	public void transition(Message msg) {
@@ -49,7 +53,8 @@ public class ClientFSM extends StateMachine {
 		switch(this.currentState.getIdName())
 		{	
 			case 0://init status
-				//subscribe button 2
+				ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
+				this.currentState = this.free;
 				break;
 			case 1://free status
 				if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)

@@ -6,9 +6,11 @@ package no.ntnu.item.ttm4160.sunspot.fsm;
 import java.io.IOException;
 
 import com.sun.spot.peripheral.Spot;
+import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.util.IEEEAddress;
 
 import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
+import no.ntnu.item.ttm4160.sunspot.communication.ButtonListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 
@@ -29,9 +31,10 @@ public class ServerFSM extends StateMachine {
 	
 	private String receiver;
 	/**
+	 * @throws IOException 
 	 * 
 	 */
-	public ServerFSM(String iD) {
+	public ServerFSM(String iD) throws IOException {
 		//initialization of the id 
 		this.ID = iD;//assign the id to the state machine
 		//initialization of the States of the FSM
@@ -42,6 +45,8 @@ public class ServerFSM extends StateMachine {
 		this.currentState=this.initialState;
 		//initialize the coomunications obj
 		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
+		//first transition from init to Ready
+		this.transition(null);
 	}
 
 	public void transition(Message msg) throws IOException {
@@ -49,8 +54,9 @@ public class ServerFSM extends StateMachine {
 		switch(this.currentState.getIdName())
 		{	
 			case 0://init status
-				//subscribe button 2
-				//subscribe button 1
+				ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[0]);//subscribe button 1
+				ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
+				this.currentState = this.ready;
 				break;
 			case 1://ready status
 				if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
@@ -63,6 +69,7 @@ public class ServerFSM extends StateMachine {
 				break;
 			case 2://wait_response
 				//TODO denied message
+				
 				if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
 				{
 					out = new Message(getMySender(),msg.getSender(),Message.Approved);
