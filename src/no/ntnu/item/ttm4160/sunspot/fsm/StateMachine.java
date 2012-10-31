@@ -74,12 +74,16 @@ public abstract class StateMachine {
 	 */
 	public abstract void transition(Message msg) throws IOException;
 	
-	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID shold be a final variable,bc we know the names of our timers
+	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID should be a final variable in each the FSM,bc we know the names of our timers
 	{
 		return new SpotTimer(this.ID,timerID);
 		
 	}
 	
+	/**
+	 * 
+	 * @return the format of the strinn that has to be in the sender part of the msg
+	 */
 	protected String getMySender()
 	{
 		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex()+":"+this.ID;
