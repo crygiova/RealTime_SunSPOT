@@ -13,6 +13,8 @@ import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.ButtonListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Communications;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
+import no.ntnu.item.ttm4160.sunspot.timers.HandleTimer;
+import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
 
 /**
  * @author christiangiovanelli
@@ -24,6 +26,9 @@ public class ServerFSM extends StateMachine {
 	private final String READY_ST = "ready";
 	private final String WAIT_ST = "wait_response";
 	private final String SEND_ST = "sending";
+	
+	private final String GIVE_UP_TIMER= "giveUpTimer";
+	private final String SEND_AGAIN_TIMER= "sendAgainTimer";
 	
 	private State ready;
 	private State wait_resp;
@@ -61,7 +66,9 @@ public class ServerFSM extends StateMachine {
 			case 1://ready status
 				if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
 				{
-					//TODO set up timer 500 ms
+					SpotTimer t =this.createTimer(GIVE_UP_TIMER);//TODO maybe a constructor with included the start function
+					t.start(500);
+					HandleTimer.addTimer(t);//TODO set up timer 500 ms
 					out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
 					communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
 					this.currentState=this.wait_resp;
@@ -69,32 +76,35 @@ public class ServerFSM extends StateMachine {
 				break;
 			case 2://wait_response
 				//TODO denied message
-				
 				if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
 				{
 					out = new Message(getMySender(),msg.getSender(),Message.Approved);
 					communicate.sendRemoteMessage(out);//sending approved message
 					receiver = msg.getSender();//
-					//TODO starting again timer
+					SpotTimer t =this.createTimer(SEND_AGAIN_TIMER);//TODO maybe a constructor with included the start function
+					t.start(100);
+					HandleTimer.addTimer(t);//TODO START AGAIN TIMER
 					this.currentState=this.send;
 				}
-				/*else 
-				if()//TODO give up timer
+				else 
+				if(msg.getContent().compareTo(GIVE_UP_TIMER)==0)//TODO give up timer
 				{
 					SunSpotUtil.blinkLeds();
 					this.currentState=this.ready;
-				}*/
+				}
 				break;
 			case 3://sending
-/*			//	if()//TODO send again timer
+				if(msg.getContent().compareTo(SEND_AGAIN_TIMER)==0)//TODO send again timer
 				{
-					//start send again timer 100 ms
+					SpotTimer t =this.createTimer(SEND_AGAIN_TIMER);//TODO maybe a constructor with included the start function
+					t.start(100);
+					HandleTimer.addTimer(t);//TODO //start send again timer 100 ms
 					int result = SunSpotUtil.getLightAvg();//reading the light sensors
 					out = new Message(getMySender(),receiver,Message.Reading+result);
 					communicate.sendRemoteMessage(out);
 					this.currentState= this.send;
-				}*/
-			// TODO	else
+				}
+				else
 					if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
 					{
 						out = new Message(getMySender(),msg.getSender(),Message.SenderDisconnect);

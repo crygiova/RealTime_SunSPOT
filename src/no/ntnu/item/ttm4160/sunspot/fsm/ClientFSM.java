@@ -22,6 +22,7 @@ public class ClientFSM extends StateMachine {
 	private final String WAIT_ST="wait_approved";
 	private final String BUSY_ST="busy";
 	
+	private final String TIMEOUT_TIMER= "timeoutTimer";
 	
 	private State free;
 	private State wait_app;

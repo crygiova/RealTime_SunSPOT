@@ -10,7 +10,7 @@ import java.util.Vector;
  */
 public class HandleTimer {
 	
-	/*private static Vector activeTimers = new Vector();
+	private static Vector activeTimers = new Vector();
 	
 	public static void addTimer(SpotTimer t)
 	{
@@ -22,7 +22,7 @@ public class HandleTimer {
 			 buffer = (SpotTimer) activeTimers.elementAt(index);
 			 if(buffer.getTimeout()>t.getTimeout())
 			 {
-				 activeTimers.insertElementAt(obj, index)
+				 //activeTimers.insertElementAt(obj, index)
 			 }
 		}
 	}
@@ -33,5 +33,5 @@ public class HandleTimer {
 	{	
 		activeTimers.removeElement(t);
 	}
-*/
+
 }
