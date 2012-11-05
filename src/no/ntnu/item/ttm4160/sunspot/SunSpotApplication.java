@@ -28,6 +28,7 @@ import java.io.IOException;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
+import no.ntnu.item.ttm4160.sunspot.communication.ButtonListener;
 import no.ntnu.item.ttm4160.sunspot.runtime.Scheduler;
 
 import com.sun.spot.peripheral.Spot;
@@ -35,6 +36,7 @@ import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.sensorboard.peripheral.ITriColorLED;
 import com.sun.spot.sensorboard.peripheral.LEDColor;
 import com.sun.spot.sensorboard.peripheral.LightSensor;
+import com.sun.spot.sensorboard.peripheral.Switch;
 import com.sun.spot.util.BootloaderListener;
 import com.sun.spot.util.IEEEAddress;
 import com.sun.spot.util.Utils;
@@ -50,35 +52,18 @@ public class SunSpotApplication extends MIDlet {
 	
 	Scheduler scheduler;
 	private static ITriColorLED [] leds = EDemoBoard.getInstance().getLEDs();
-	
-	public static void blinkLeds()
-	{ 
-		for (int j = 2; j >=0 ; j--) 
-		{
-            for (int i = 7; i >=0 ; i--)
-            {
-            	switch(j)
-            	{
-            		case 2:leds[i].setColor(LEDColor.RED);break;
-            		case 1:leds[i].setColor(LEDColor.WHITE);break;
-            		case 0: leds[i].setColor(LEDColor.GREEN);break;
-            	}
-            	leds[i].setOn();
-            }
-            Utils.sleep(400);
-            for (int i = 7; i >=0 ; i--)
-            {
-            	leds[i].setOff();
-            }
-            Utils.sleep(200);           
-        }
-	}
+	private static  ButtonListener btnL = new ButtonListener();
 	
     protected void startApp() throws MIDletStateChangeException {
     	
         new BootloaderListener().start();   // monitor the USB (if connected) and recognize commands from host
         // So you don't have to reset SPOT to deploy new code on it.
-
+        
+        EDemoBoard.getInstance().getSwitches()[0].addISwitchListener(btnL);//add the ButtonListener as a listener of the button 1
+	    EDemoBoard.getInstance().getSwitches()[1].addISwitchListener(btnL);//add the ButtonListener as a listener of the button 2
+	    Scheduler s = new Scheduler();//declaring the Scheduler
+	    btnL.registerAsListener(s);//Registration of the Scheduler as a listener of the messages of the ButtonListener
+	    
         /*
          * Instantiate the scheduler and the state machines, then start the scheduler.
 /*         */
@@ -88,11 +73,21 @@ public class SunSpotApplication extends MIDlet {
         
         
         
+        
         s.addFSM(client);
         
         s.loopfunction();
-     */   		
-        while(true)
+     */  
+        
+        /*ButtonListener btn = new ButtonListener();
+        EDemoBoard.getInstance().getSwitches()[0].addISwitchListener(btn); 
+        EDemoBoard.getInstance().getSwitches()[1].addISwitchListener(btn);//registration of the liestener
+*/
+       /* while(true)
+        {
+        	btn.switchPressed(EDemoBoard.getInstance().getSwitches()[0]);
+        }
+       /* while(true)
         {
         	int avg=500;
         	Utils.sleep(1000);
@@ -105,7 +100,7 @@ public class SunSpotApplication extends MIDlet {
 				e.printStackTrace();
 			}
         	SunSpotUtil.lightToLeds(avg);
-       */ 	
+      	
         	for(int i = 0;i<8;i++)
         	{
             	Utils.sleep(3000);
@@ -114,7 +109,8 @@ public class SunSpotApplication extends MIDlet {
             	Utils.sleep(1000);
         	}
         	
-        }
+        }*/
+        
         
     }
     

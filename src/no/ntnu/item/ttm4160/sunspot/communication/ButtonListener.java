@@ -39,6 +39,7 @@ public class ButtonListener implements ISwitchListener {
 				msg = new Message("",subsBtn1.elementAt(i).toString(),Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
 				comm.sendRemoteMessage(msg);
 			}
+			SunSpotUtil.testMethod(3);
 		}
 		else //button 2 pressed
 		{
@@ -47,11 +48,11 @@ public class ButtonListener implements ISwitchListener {
 				msg = new Message("",subsBtn2.elementAt(i).toString(),Message.button2Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt2pressed
 				comm.sendRemoteMessage(msg);
 			}
-			
+			SunSpotUtil.testMethod(7);
 		}
 	}
 	//the scheduler should register to receive the messages
-	public static void registerAsListener(Scheduler s)
+	public void registerAsListener(Scheduler s)
 	{
 		comm.registerListener(s);
 	}
@@ -71,7 +72,7 @@ public class ButtonListener implements ISwitchListener {
 	 * @param btn specify at wich button tha process/FSM is interested to be subscribed
 	 * @return
 	 */
-	public static boolean subscribe(String PID,ISwitch btn)
+	public static boolean subscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
 	{
 		if(btn.equals(button[0])) //button 1
 		{
@@ -98,7 +99,7 @@ public class ButtonListener implements ISwitchListener {
 	 * 
 	 * @return
 	 */
-	public static boolean unsubscribe(String PID,ISwitch btn)
+	public static boolean unsubscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
 	{
 		if(btn.equals(button[0])) //button 1
 		{
