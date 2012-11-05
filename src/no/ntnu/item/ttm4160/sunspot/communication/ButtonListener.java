@@ -37,8 +37,6 @@ public class ButtonListener implements ISwitchListener {
 			for(int i =0;i<subsBtn1.size();i++)
 			{
 				msg = new Message("",subsBtn1.elementAt(i).toString(),Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
-				//TODO send it to the scheduler
-				//comm.registerListener();//TODO register the scheduler as a listener
 				comm.sendRemoteMessage(msg);
 			}
 		}
@@ -47,14 +45,18 @@ public class ButtonListener implements ISwitchListener {
 			for(int i =0;i<subsBtn2.size();i++)
 			{
 				msg = new Message("",subsBtn2.elementAt(i).toString(),Message.button2Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt2pressed
-				//TODO send it to the scheduler
-			//	comm.registerListener();//TODO register the scheduler as a listener
 				comm.sendRemoteMessage(msg);
 			}
 			
 		}
 	}
+	//the scheduler should register to receive the messages
+	public static void registerAsListener(Scheduler s)
+	{
+		comm.registerListener(s);
+	}
 
+	
 	/**
 	 * @see com.sun.spot.sensorboard.peripheral.ISwitchListener#switchReleased(com.sun.spot.sensorboard.peripheral.ISwitch)
 	 */
@@ -73,7 +75,7 @@ public class ButtonListener implements ISwitchListener {
 	{
 		if(btn.equals(button[0])) //button 1
 		{
-			//TODO add to the vector of btn1 the PID of the FSM that wants to be subscribed
+			//add to the vector of btn1 the PID of the FSM that wants to be subscribed
 			if(!subsBtn1.contains(PID))//if the subscribe not contain the PID
 			{
 				subsBtn1.addElement(PID);//add the PID to the subscribe list
@@ -82,7 +84,7 @@ public class ButtonListener implements ISwitchListener {
 		}
 		else //button 2
 		{
-			//TODO add to the vector of btn2 the PID of the FSM that wants to be subscribed
+			//add to the vector of btn2 the PID of the FSM that wants to be subscribed
 			if(!subsBtn2.contains(PID))//if the subscribe not contain the PID
 			{
 				subsBtn2.addElement(PID);//add the PID to the subscribe list

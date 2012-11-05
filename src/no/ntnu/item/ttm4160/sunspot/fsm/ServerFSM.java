@@ -66,8 +66,7 @@ public class ServerFSM extends StateMachine {
 			case 1://ready status
 				if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
 				{
-					SpotTimer t =this.createTimer(GIVE_UP_TIMER);//TODO maybe a constructor with included the start function
-					t.start(500);
+					SpotTimer t =this.createTimer(GIVE_UP_TIMER,500);//TODO maybe a constructor with included the start function
 					HandleTimer.addTimer(t);//TODO set up timer 500 ms
 					out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
 					communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
@@ -81,23 +80,22 @@ public class ServerFSM extends StateMachine {
 					out = new Message(getMySender(),msg.getSender(),Message.Approved);
 					communicate.sendRemoteMessage(out);//sending approved message
 					receiver = msg.getSender();//
-					SpotTimer t =this.createTimer(SEND_AGAIN_TIMER);//TODO maybe a constructor with included the start function
-					t.start(100);
+					HandleTimer.removeTimer(this.createTimer(GIVE_UP_TIMER));
+					SpotTimer t =this.createTimer(SEND_AGAIN_TIMER,100);//TODO maybe a constructor with included the start function
 					HandleTimer.addTimer(t);//TODO START AGAIN TIMER
 					this.currentState=this.send;
 				}
 				else 
-				if(msg.getContent().compareTo(GIVE_UP_TIMER)==0)//TODO give up timer
+				if(msg.getContent().compareTo(Message.Timeout+GIVE_UP_TIMER)==0)//TODO give up timer
 				{
 					SunSpotUtil.blinkLeds();
 					this.currentState=this.ready;
 				}
 				break;
 			case 3://sending
-				if(msg.getContent().compareTo(SEND_AGAIN_TIMER)==0)//TODO send again timer
+				if(msg.getContent().compareTo(Message.Timeout+SEND_AGAIN_TIMER)==0)//TODO send again timer
 				{
-					SpotTimer t =this.createTimer(SEND_AGAIN_TIMER);//TODO maybe a constructor with included the start function
-					t.start(100);
+					SpotTimer t = this.createTimer(SEND_AGAIN_TIMER,100);//TODO maybe a constructor with included the start function
 					HandleTimer.addTimer(t);//TODO //start send again timer 100 ms
 					int result = SunSpotUtil.getLightAvg();//reading the light sensors
 					out = new Message(getMySender(),receiver,Message.Reading+result);
@@ -112,18 +110,17 @@ public class ServerFSM extends StateMachine {
 						SunSpotUtil.blinkLeds();
 						this.currentState=this.ready;
 					}
-					else if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
-					{
-						if(receiver.compareTo(msg.getReceiver())==0)//if I receive the disconnect from my receiver
+					else 
+						if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
 						{
-							//TODO stop timer send again
-							SunSpotUtil.blinkLeds();
-							this.currentState=this.ready;
+							if(receiver.compareTo(msg.getReceiver())==0)//if I receive the disconnect from my receiver
+							{
+								HandleTimer.removeTimer(this.createTimer(SEND_AGAIN_TIMER));//TODO stop timer send again
+								SunSpotUtil.blinkLeds();
+								this.currentState=this.ready;
+							}
 						}
-						
-					}
-				break;
-				
+				break;	
 		}
 	}
 

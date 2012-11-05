@@ -80,6 +80,12 @@ public abstract class StateMachine {
 		
 	}
 	
+	protected SpotTimer createTimer(String timerID,long delay)//TODO I think that timer ID should be a final variable in each the FSM,bc we know the names of our timers
+	{
+		return new SpotTimer(this.ID,timerID,delay);
+		
+	}
+	
 	/**
 	 * 
 	 * @return the format of the strinn that has to be in the sender part of the msg

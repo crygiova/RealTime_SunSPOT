@@ -25,6 +25,9 @@ public class Message {
 	public static String SenderDisconnect="sender disconnect";
 	public static String ReceiverDisconnect="receiver disconnect";
 	
+	public static String Timeout = "timeout:";
+	
+	
 	
 	//Addressing
 	public static String BROADCAST_ADDRESS="broadcast";

@@ -29,6 +29,15 @@ public class SpotTimer {
 		delay=0;
 		timeout=0;
 	}
+	
+	public SpotTimer(String PID,String TID,long delay)
+	{
+		this.PID=PID;
+		this.TID= TID;
+		startingTime=System.currentTimeMillis();
+		this.delay =delay;
+		timeout = startingTime +delay;
+	}
 
 	
 	public boolean start(long delay)

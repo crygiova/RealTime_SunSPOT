@@ -23,15 +23,21 @@
  */
 package no.ntnu.item.ttm4160.sunspot;
 
+import java.io.IOException;
+
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import no.ntnu.item.ttm4160.sunspot.runtime.Scheduler;
 
 import com.sun.spot.peripheral.Spot;
+import com.sun.spot.sensorboard.EDemoBoard;
+import com.sun.spot.sensorboard.peripheral.ITriColorLED;
+import com.sun.spot.sensorboard.peripheral.LEDColor;
 import com.sun.spot.sensorboard.peripheral.LightSensor;
 import com.sun.spot.util.BootloaderListener;
 import com.sun.spot.util.IEEEAddress;
+import com.sun.spot.util.Utils;
 
 /*
  * The startApp method of this class is called by the VM to start the
@@ -43,7 +49,30 @@ import com.sun.spot.util.IEEEAddress;
 public class SunSpotApplication extends MIDlet {
 	
 	Scheduler scheduler;
+	private static ITriColorLED [] leds = EDemoBoard.getInstance().getLEDs();
 	
+	public static void blinkLeds()
+	{ 
+		for (int j = 2; j >=0 ; j--) 
+		{
+            for (int i = 7; i >=0 ; i--)
+            {
+            	switch(j)
+            	{
+            		case 2:leds[i].setColor(LEDColor.RED);break;
+            		case 1:leds[i].setColor(LEDColor.WHITE);break;
+            		case 0: leds[i].setColor(LEDColor.GREEN);break;
+            	}
+            	leds[i].setOn();
+            }
+            Utils.sleep(400);
+            for (int i = 7; i >=0 ; i--)
+            {
+            	leds[i].setOff();
+            }
+            Utils.sleep(200);           
+        }
+	}
 	
     protected void startApp() throws MIDletStateChangeException {
     	
@@ -63,7 +92,29 @@ public class SunSpotApplication extends MIDlet {
         
         s.loopfunction();
      */   		
-        
+        while(true)
+        {
+        	int avg=500;
+        	Utils.sleep(1000);
+        	SunSpotUtil.blinkLeds();
+        	Utils.sleep(1000);
+     /*   	try {
+        		avg=SunSpotUtil.getLightAvg();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	SunSpotUtil.lightToLeds(avg);
+       */ 	
+        	for(int i = 0;i<8;i++)
+        	{
+            	Utils.sleep(3000);
+            //	SunSpotUtil.clearLeds();
+            	SunSpotUtil.testMethod(i);
+            	Utils.sleep(1000);
+        	}
+        	
+        }
         
     }
     

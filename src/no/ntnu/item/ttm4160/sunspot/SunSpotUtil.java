@@ -57,6 +57,14 @@ public class SunSpotUtil {
 		return sens.getAverageValue();
 	}
 	
+	public static void clearLeds()
+	{
+		for (int i = 8; i >=0 ; i--)
+        {
+        	leds[i].setOff();
+        }
+	}
+	
 	/**
 	 * with a given avg it print on the leds the corresponding value
 	 * @param avg
@@ -111,6 +119,39 @@ public class SunSpotUtil {
             	}
 //            	Utils.sleep(200);
         	}	
+        }
+	}
+	
+	public static void testMethod(int led)
+	{
+		int number;
+		if(led>=0 && led <8)
+		{
+			number = led;
+		}
+		else
+		{
+			number = 7;
+		}
+		
+		for (int j = 2; j >=0 ; j--) 
+		{
+            for (int i = number; i >=0 ; i--)
+            {
+            	switch(j)
+            	{
+            		case 2:leds[i].setColor(LEDColor.RED);break;
+            		case 1:leds[i].setColor(LEDColor.WHITE);break;
+            		case 0: leds[i].setColor(LEDColor.GREEN);break;
+            	}
+            	leds[i].setOn();
+            }
+            Utils.sleep(300);
+            for (int i = number; i >=0 ; i--)
+            {
+            	leds[i].setOff();
+            }
+            Utils.sleep(200);           
         }
 	}
 }
