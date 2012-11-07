@@ -35,7 +35,7 @@ public class ClientFSM extends StateMachine {
 	/**
 	 * 
 	 */
-	public ClientFSM(String iD) {
+	public ClientFSM(String iD,ButtonListener btn,Communications communicate) {
 		//Id of the FSM
 		this.ID = iD;
 		//initialization of the States of the FSM
@@ -44,10 +44,10 @@ public class ClientFSM extends StateMachine {
 		busy = new State(BUSY_ST,3);
 		//setting up the initial state
 		this.currentState= this.initialState;
-		//initialize the coomunications obj
-		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
-		//first transition from init to Free
-		ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
+		//initialize the comunications obj
+		this.communicate = communicate;
+		//first transition from init to Free*/
+		btn.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
 		this.currentState = this.free;
 	}
 

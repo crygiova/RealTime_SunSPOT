@@ -5,6 +5,7 @@ package no.ntnu.item.ttm4160.sunspot.fsm;
 
 import java.io.IOException;
 
+import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.*;
 import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
 
@@ -112,7 +113,7 @@ public abstract class StateMachine {
 	 */
 	protected String getMySender()
 	{
-		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex()+":"+this.ID;
+		return SunSpotUtil.getMyMac()+":"+this.ID;
 	}
 	
 	

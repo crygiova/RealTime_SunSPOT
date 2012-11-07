@@ -38,7 +38,8 @@ public class Communications implements ICommunicationLayer{
 			startServer();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("ECCEEZZIONE COMUNICAZIONE");
 		}
 	}
 	
@@ -76,8 +77,13 @@ public class Communications implements ICommunicationLayer{
 	
 	
 	private synchronized void addMessage(Message msg){
-		for (int i = 0; i < listeners.size(); i++) {
+		//System.out.println("I'm in addMessage");
+		//System.out.println("Size of the listeners : "+listeners.size());
+		for (int i = 0; i < listeners.size(); i++) 
+		{
+
 			ICommunicationLayerListener listener=(ICommunicationLayerListener)listeners.elementAt(i);
+			//System.out.println("Sending to:"+listener.toString());
 			listener.inputReceived(msg);
 		}
 	}
@@ -150,10 +156,12 @@ public class Communications implements ICommunicationLayer{
         	    	String rawString = dg.readUTF(); 
         	    	System.out.println("Received datagram: "+rawString);
         	    	Message msg=Message.deSerializeMessage(rawString);
+        	    //	System.out.println("Message Deserialized");
         	    	processIncomingMessage(msg);
         		} catch (IOException e) {
         			// TODO Auto-generated catch block
-        			e.printStackTrace();
+        			//e.printStackTrace();
+        			System.out.println("Receiving Exception");
         		} 
     		}
     	}
@@ -165,7 +173,9 @@ public class Communications implements ICommunicationLayer{
     				openReliableConnection(msg, false);
     			}
     		}
-    		else if(msg.getReceiver().equals(Message.BROADCAST_ADDRESS)){
+    		else if(msg.getReceiver().equals(Message.BROADCAST_ADDRESS))
+    		{	
+    			System.out.println("Broadcast Message");
     			addMessage(msg);
     		}
     		else{

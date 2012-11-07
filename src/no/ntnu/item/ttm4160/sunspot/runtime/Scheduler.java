@@ -25,29 +25,25 @@ public class Scheduler implements ICommunicationLayerListener {
 		
 	}
 	
-	public void inputReceived(Message msg) {
-		// TODO Auto-generated method stub
+	public void inputReceived(Message msg) 
+	{
 		
 		if(msg.getContent().compareTo(Message.button1Pressed)==0)
 		{
-			SunSpotUtil.testMethod(1);
-			Utils.sleep(1000);
-			SunSpotUtil.testMethod(1);
-			Utils.sleep(1000);
-			SunSpotUtil.testMethod(1);
-			Utils.sleep(1000);
-
+			System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver());
 		}
 		if(msg.getContent().compareTo(Message.button2Pressed)==0)
 		{
-			SunSpotUtil.testMethod(2);
-			Utils.sleep(1000);
-			SunSpotUtil.testMethod(2);
-			Utils.sleep(1000);
-			SunSpotUtil.testMethod(2);
-			Utils.sleep(1000);
-
+			System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver());
 		}
+		if(msg.getContent().compareTo(Message.Approved)==0)
+		{
+			System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver()+" Sender: "+msg.getSender());	
+		}
+		
 	}
+	
+	public String toString()
+	{ return "I'm the Scheduler";}
 
 }

@@ -5,6 +5,7 @@ package no.ntnu.item.ttm4160.sunspot.communication;
 
 import java.util.Vector;
 
+import no.ntnu.item.ttm4160.sunspot.fsm.StateMachine;
 import no.ntnu.item.ttm4160.sunspot.runtime.Scheduler;
 import no.ntnu.item.ttm4160.sunspot.*;
 import com.sun.spot.peripheral.Spot;
@@ -35,7 +36,10 @@ public class ButtonListener implements ISwitchListener {
 		{
 			for(int i =0;i<subsBtn1.size();i++)
 			{
-				msg = new Message("",subsBtn1.elementAt(i).toString(),Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
+				String receiver = SunSpotUtil.getMyMac()+":"+((String)subsBtn1.elementAt(i));
+				//printf if a FSM is subscribed
+				//System.out.println(receiver+"  btn1");
+				msg = new Message("",receiver,Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
 				s.inputReceived(msg);//just call the scheduler function
 			}
 		}
@@ -43,7 +47,10 @@ public class ButtonListener implements ISwitchListener {
 		{
 			for(int i =0;i<subsBtn2.size();i++)
 			{
-				msg = new Message("",subsBtn2.elementAt(i).toString(),Message.button2Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt2pressed
+				String receiver = SunSpotUtil.getMyMac()+":"+((String)subsBtn2.elementAt(i));
+				//printf if a FSM is subscribed
+				//System.out.println(receiver+"  btn2");
+				msg = new Message("",receiver,Message.button2Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt2pressed
 				s.inputReceived(msg);
 			}
 		}
@@ -69,7 +76,7 @@ public class ButtonListener implements ISwitchListener {
 	 * @param btn specify at wich button tha process/FSM is interested to be subscribed
 	 * @return
 	 */
-	public static boolean subscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
+	public boolean subscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
 	{
 		if(btn.equals(button[0])) //button 1
 		{
@@ -96,7 +103,7 @@ public class ButtonListener implements ISwitchListener {
 	 * 
 	 * @return
 	 */
-	public static boolean unsubscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
+	public boolean unsubscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
 	{
 		if(btn.equals(button[0])) //button 1
 		{

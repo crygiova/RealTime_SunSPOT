@@ -5,10 +5,12 @@ package no.ntnu.item.ttm4160.sunspot;
 
 import java.io.IOException;
 
+import com.sun.spot.peripheral.Spot;
 import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.sensorboard.peripheral.ITriColorLED;
 import com.sun.spot.sensorboard.peripheral.LEDColor;
 import com.sun.spot.sensorboard.peripheral.LightSensor;
+import com.sun.spot.util.IEEEAddress;
 import com.sun.spot.util.Utils;
 
 /**
@@ -154,4 +156,15 @@ public class SunSpotUtil {
             Utils.sleep(200);           
         }
 	}
+	
+	/**
+	 * 
+	 * @return the MAc address of the device
+	 */
+	public static String getMyMac()
+	{
+		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex();
+	}
 }
+
+

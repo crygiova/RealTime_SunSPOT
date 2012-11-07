@@ -39,7 +39,8 @@ public class ServerFSM extends StateMachine {
 	 * @throws IOException 
 	 * 
 	 */
-	public ServerFSM(String iD) throws IOException {
+	public ServerFSM(String iD,ButtonListener btn,Communications communicate) 
+	{
 		//initialization of the id 
 		this.ID = iD;//assign the id to the state machine
 		//initialization of the States of the FSM
@@ -49,10 +50,10 @@ public class ServerFSM extends StateMachine {
 		//setting the initial state
 		this.currentState=this.initialState;
 		//initialize the coomunications obj
-		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
-		//first transition from init to Ready
-		ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[0]);//subscribe button 1
-		ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
+		this.communicate = communicate;
+		//first transition from init to Ready*/
+		btn.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[0]);//subscribe button 1
+		btn.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2*/
 		this.currentState = this.ready;
 	}
 	

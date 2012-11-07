@@ -29,6 +29,10 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 import no.ntnu.item.ttm4160.sunspot.communication.ButtonListener;
+import no.ntnu.item.ttm4160.sunspot.communication.Communications;
+import no.ntnu.item.ttm4160.sunspot.communication.Message;
+import no.ntnu.item.ttm4160.sunspot.fsm.ClientFSM;
+import no.ntnu.item.ttm4160.sunspot.fsm.ServerFSM;
 import no.ntnu.item.ttm4160.sunspot.runtime.Scheduler;
 
 import com.sun.spot.peripheral.Spot;
@@ -50,19 +54,50 @@ import com.sun.spot.util.Utils;
  */
 public class SunSpotApplication extends MIDlet {
 	
+	/**Scheduler*/
 	Scheduler scheduler;
 	private static ITriColorLED [] leds = EDemoBoard.getInstance().getLEDs();
+	/**Button Listener*/
 	private static  ButtonListener btnL = new ButtonListener();
+	/**Server FSM*/
+	private static ServerFSM serverFSM;
+	/**Client FSM*/
+	private static ClientFSM clientFSM;
+	/**This is the counter for the status machines*/
+	private static int counter =-1;
+	/**This is the communication object used to comunications between SUNSPOT*/
+	private static Communications communicate;
 	
-    protected void startApp() throws MIDletStateChangeException {
+    protected void startApp() throws MIDletStateChangeException 
+    {
     	
         new BootloaderListener().start();   // monitor the USB (if connected) and recognize commands from host
         // So you don't have to reset SPOT to deploy new code on it.
+        scheduler = new Scheduler();//declaring the Scheduler
         
         EDemoBoard.getInstance().getSwitches()[0].addISwitchListener(btnL);//add the ButtonListener as a listener of the button 1
 	    EDemoBoard.getInstance().getSwitches()[1].addISwitchListener(btnL);//add the ButtonListener as a listener of the button 2
-	    Scheduler s = new Scheduler();//declaring the Scheduler
-	    btnL.registerAsListener(s);//Registration of the Scheduler as a listener of the messages of the ButtonListener
+	    communicate = new Communications(SunSpotUtil.getMyMac());//init the communication obj passing tha MAC address
+	    //registration of the scheduler as a communication listener
+	    communicate.registerListener(scheduler);
+	    
+	    btnL.registerAsListener(scheduler);//Registration of the Scheduler as a listener of the messages of the ButtonListener
+	    serverFSM = new ServerFSM(getFsmID(),btnL,communicate);
+	    clientFSM = new ClientFSM(getFsmID(),btnL,communicate);
+	    scheduler.assFSM(serverFSM);
+	    scheduler.assFSM(clientFSM);
+	    scheduler.execute();
+	    //TEST of sending, delete it for the client and add it for the server SUNSPOT for testing
+	    while(true)
+	    {
+	    	Utils.sleep(3000);
+	    	System.out.println("Sending");
+	    	Message out = new Message(SunSpotUtil.getMyMac(),Message.BROADCAST_ADDRESS,Message.Approved);//editing the msn of can u display my readings
+			communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
+	    }
+	    
+	    
+	    
 	    /*
          * Instantiate the scheduler and the state machines, then start the scheduler.
 /*         */
@@ -117,7 +152,10 @@ public class SunSpotApplication extends MIDlet {
     
    
     
-    
+    public String getFsmID()
+    {
+    	return Integer.toString(++counter);
+    }
     
     protected void pauseApp() {
         // This will never be called by the Squawk VM
