@@ -47,101 +47,104 @@ public class ClientFSM extends StateMachine {
 		//initialize the coomunications obj
 		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
 		//first transition from init to Free
-		this.transition(null);
+		ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
+		this.currentState = this.free;
 	}
 
-	public void transition(Message msg) {
+	public void transition() {
 		Message out;
+		Message msg;
 		//TODO input queue & saved message queue?? take a look in the teory
-		switch(this.currentState.getIdName())
-		{	
-			case 0://init status
-				ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
-				this.currentState = this.free;
-				break;
-			case 1://free status
-				/*if(!saveMsgQueue.isEmpty())//TODO at least 1 can u dispay my readings
-				{
-					
-				}
-				else*/
-				if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
-				{
-					out = new Message(getMySender(),msg.getSender(),Message.ICanDisplayReadings);//sending the message to response I can display ur readings
-					communicate.sendRemoteMessage(out);//sending the out message
-					this.currentState=this.wait_app;
-				}
-				break;
-			case 2://wait approved status
-				if(msg.getContent().compareTo(Message.Approved)==0)
-				{
-					SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
-					HandleTimer.addTimer(t);// start timeout
-					this.currentState = this.busy;
-					receiver = msg.getSender();
-				}
-				else
-				{
-					if(msg.getContent().compareTo(Message.Denied)==0)
+		
+		if(!this.inputQueue.isEmpty())
+		{
+			msg = (Message)this.inputQueue.get();
+			switch(this.currentState.getIdName())
+			{
+			
+				case 1://free status
+					/*if(!saveMsgQueue.isEmpty())//TODO at least 1 can u dispay my readings
 					{
-						this.currentState= this.free;
+						
 					}
-					else 
+					else*/
 					if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
 					{
-							this.saveMsgQueue.put(msg);//put in the save message queue the msg
+						out = new Message(getMySender(),msg.getSender(),Message.ICanDisplayReadings);//sending the message to response I can display ur readings
+						communicate.sendRemoteMessage(out);//sending the out message
+						this.currentState=this.wait_app;
 					}
-				}
-				break;
-			case 3://busy status
-				
-				if(msg.getContent().compareTo(Message.SenderDisconnect)==0)//if sender disconnect
-				{
-					if(msg.getSender().compareTo(receiver)==0)
+					break;
+				case 2://wait approved status
+					if(msg.getContent().compareTo(Message.Approved)==0)
 					{
-						HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//TODO stop timer TIMEOUT TIMER
-						SunSpotUtil.blinkLeds();
-						this.currentState=this.free;
+						SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
+						HandleTimer.addTimer(t);// start timeout
+						this.currentState = this.busy;
+						receiver = msg.getSender();
 					}
-				}
-				else if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
-				{
-					// ReceiverDisconnect message
-					HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));// stop timer TIMEOUT TIMER
-					
-					out = new Message(getMySender(),msg.getSender(),Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
-					communicate.sendRemoteMessage(out);//sending the out message
-					SunSpotUtil.blinkLeds();
-					this.currentState= this.free;
-				}
-			 	else 
-				if(msg.getContent().compareTo(Message.Timeout+TIMEOUT_TIMER)==0)
-				{
-					this.currentState=this.free;
-				}
-				else 
-				{	//probably in reading or nothing
-					int indexMsg, index;
-					index=msg.getContent().indexOf(":");//TAKING THE SUBSTRING BEFORE :
-					indexMsg=Message.Reading.indexOf(":");//TAKING THE SUBSTRING BEFORE :
-					
-					if(index!=-1 && indexMsg!=-1) //it's a reading message
+					else
 					{
-						if(msg.getContent().substring(0, index).compareTo(Message.Reading.substring(0, indexMsg))==0)//if is reading msg
+						if(msg.getContent().compareTo(Message.Denied)==0)
 						{
-							int result = Integer.parseInt(msg.getContent().substring(index+1, msg.getContent().length()));//verifica che il meno uno que sia corretto quando estrai il number
-							SunSpotUtil.lightToLeds(result);//TODO display
-							//RESET THE TIMER, TAKE IT OFF AND PUT IT AGAIN
-							HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//stop timer TIMEOUT TIMER
-							SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
-							HandleTimer.addTimer(t);// start timeout
-							this.currentState=this.busy;
+							this.currentState= this.free;
+						}
+						else 
+						if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
+						{
+								this.saveMsgQueue.put(msg);//put in the save message queue the msg
 						}
 					}
-				}
-				break;
+					break;
+				case 3://busy status
+					
+					if(msg.getContent().compareTo(Message.SenderDisconnect)==0)//if sender disconnect
+					{
+						if(msg.getSender().compareTo(receiver)==0)
+						{
+							HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//TODO stop timer TIMEOUT TIMER
+							SunSpotUtil.blinkLeds();
+							this.currentState=this.free;
+						}
+					}
+					else if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
+					{
+						// ReceiverDisconnect message
+						HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));// stop timer TIMEOUT TIMER
+						
+						out = new Message(getMySender(),msg.getSender(),Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
+						communicate.sendRemoteMessage(out);//sending the out message
+						SunSpotUtil.blinkLeds();
+						this.currentState= this.free;
+					}
+				 	else 
+					if(msg.getContent().compareTo(Message.Timeout+TIMEOUT_TIMER)==0)
+					{
+						this.currentState=this.free;
+					}
+					else 
+					{	//probably in reading or nothing
+						int indexMsg, index;
+						index=msg.getContent().indexOf(":");//TAKING THE SUBSTRING BEFORE :
+						indexMsg=Message.Reading.indexOf(":");//TAKING THE SUBSTRING BEFORE :
+						
+						if(index!=-1 && indexMsg!=-1) //it's a reading message
+						{
+							if(msg.getContent().substring(0, index).compareTo(Message.Reading.substring(0, indexMsg))==0)//if is reading msg
+							{
+								int result = Integer.parseInt(msg.getContent().substring(index+1, msg.getContent().length()));//verifica che il meno uno que sia corretto quando estrai il number
+								SunSpotUtil.lightToLeds(result);//TODO display
+								//RESET THE TIMER, TAKE IT OFF AND PUT IT AGAIN
+								HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//stop timer TIMEOUT TIMER
+								SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
+								HandleTimer.addTimer(t);// start timeout
+								this.currentState=this.busy;
+							}
+						}
+					}
+					break;
+			}
+		
 		}
-		
-		
 	}
 }

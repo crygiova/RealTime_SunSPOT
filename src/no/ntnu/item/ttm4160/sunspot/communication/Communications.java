@@ -30,8 +30,6 @@ public class Communications implements ICommunicationLayer{
 	String myMACAddress;
 	Vector listeners;
 	
-	
-	
 	public Communications(String myMACAddress) {
 		this.myMACAddress=myMACAddress;
 		remoteAddressBook=new Hashtable();

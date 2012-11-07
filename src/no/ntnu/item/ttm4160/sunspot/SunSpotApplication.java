@@ -63,12 +63,11 @@ public class SunSpotApplication extends MIDlet {
 	    EDemoBoard.getInstance().getSwitches()[1].addISwitchListener(btnL);//add the ButtonListener as a listener of the button 2
 	    Scheduler s = new Scheduler();//declaring the Scheduler
 	    btnL.registerAsListener(s);//Registration of the Scheduler as a listener of the messages of the ButtonListener
-	    
-        /*
+	    /*
          * Instantiate the scheduler and the state machines, then start the scheduler.
 /*         */
         
-  /*¤      Scheduler s = new Scheduler();
+  /*      Scheduler s = new Scheduler();
         FSMClient client = new FSMClient("name");
         
         

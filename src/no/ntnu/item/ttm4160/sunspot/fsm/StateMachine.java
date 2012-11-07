@@ -53,6 +53,24 @@ public abstract class StateMachine {
 		this.inputQueue = inputQueue;
 	}
 	/**
+	 * 
+	 * @param msg
+	 */
+	public void addInputQueue(Message msg)
+	{
+		this.inputQueue.put(msg);
+	}
+	
+	/**
+	 * 
+	 * @param msg
+	 */
+	protected void addSavedQueue(Message msg)
+	{
+		this.saveMsgQueue.put(msg);
+	}
+	
+	/**
 	 * @return the saveMsgQueue
 	 */
 	public Queue getSaveMsgQueue() {
@@ -69,10 +87,10 @@ public abstract class StateMachine {
 	/**
 	 * This function is the main function of a state machine that,
 	 *  after the arrival o a input makes a transition in the state machine
-	 * @param msg
+	 * 
 	 * @throws IOException 
 	 */
-	public abstract void transition(Message msg) throws IOException;
+	public abstract void transition() throws IOException;
 	
 	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID should be a final variable in each the FSM,bc we know the names of our timers
 	{

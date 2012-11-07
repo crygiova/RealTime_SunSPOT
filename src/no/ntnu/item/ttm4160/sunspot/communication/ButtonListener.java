@@ -26,7 +26,7 @@ public class ButtonListener implements ISwitchListener {
 	private static Message msg;
 	private static Communications comm = new Communications(new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
 	
-	
+	private static Scheduler s;
 	/**
 	 * @see com.sun.spot.sensorboard.peripheral.ISwitchListener#switchPressed(com.sun.spot.sensorboard.peripheral.ISwitch)
 	 */
@@ -37,24 +37,28 @@ public class ButtonListener implements ISwitchListener {
 			for(int i =0;i<subsBtn1.size();i++)
 			{
 				msg = new Message("",subsBtn1.elementAt(i).toString(),Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
-				comm.sendRemoteMessage(msg);
+			//	comm.sendRemoteMessage(msg);
+				s.inputReceived(msg);//just call the scheduler function
 			}
-			SunSpotUtil.testMethod(3);
+			
 		}
 		else //button 2 pressed
 		{
 			for(int i =0;i<subsBtn2.size();i++)
 			{
 				msg = new Message("",subsBtn2.elementAt(i).toString(),Message.button2Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt2pressed
-				comm.sendRemoteMessage(msg);
+				//comm.sendRemoteMessage(msg);
+				s.inputReceived(msg);
 			}
-			SunSpotUtil.testMethod(7);
 		}
+		/*msg = new Message("",Message.BROADCAST_ADDRESS,Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
+		comm.sendRemoteMessage(msg);*/
 	}
 	//the scheduler should register to receive the messages
 	public void registerAsListener(Scheduler s)
 	{
 		comm.registerListener(s);
+		this.s=s;//TODO delete if using the communication
 	}
 
 	

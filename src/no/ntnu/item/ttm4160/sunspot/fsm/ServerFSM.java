@@ -51,77 +51,88 @@ public class ServerFSM extends StateMachine {
 		//initialize the coomunications obj
 		this.communicate = new Communications (new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex());
 		//first transition from init to Ready
-		this.transition(null);
+		ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[0]);//subscribe button 1
+		ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
+		this.currentState = this.ready;
 	}
-
-	public void transition(Message msg) throws IOException {
+	
+	public void transition() throws IOException {
 		Message out;
-		switch(this.currentState.getIdName())
-		{	
-			case 0://init status
-				ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[0]);//subscribe button 1
-				ButtonListener.subscribe(this.ID, EDemoBoard.getInstance().getSwitches()[1]);//subscribe button 2
-				this.currentState = this.ready;
-				break;
-			case 1://ready status
-				if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
-				{
-					SpotTimer t =this.createTimer(GIVE_UP_TIMER,500);//TODO maybe a constructor with included the start function
-					HandleTimer.addTimer(t);//TODO set up timer 500 ms
-					out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
-					communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
-					this.currentState=this.wait_resp;
-				}
-				break;
-			case 2://wait_response
-				//TODO denied message
-				if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
-				{
-					out = new Message(getMySender(),msg.getSender(),Message.Approved);
-					communicate.sendRemoteMessage(out);//sending approved message
-					receiver = msg.getSender();//
-					HandleTimer.removeTimer(this.createTimer(GIVE_UP_TIMER));
-					SpotTimer t =this.createTimer(SEND_AGAIN_TIMER,100);//TODO maybe a constructor with included the start function
-					HandleTimer.addTimer(t);//TODO START AGAIN TIMER
-					this.currentState=this.send;
-				}
-				else 
-				if(msg.getContent().compareTo(Message.Timeout+GIVE_UP_TIMER)==0)//TODO give up timer
-				{
-					SunSpotUtil.blinkLeds();
-					this.currentState=this.ready;
-				}
-				break;
-			case 3://sending
-				if(msg.getContent().compareTo(Message.Timeout+SEND_AGAIN_TIMER)==0)//TODO send again timer
-				{
-					SpotTimer t = this.createTimer(SEND_AGAIN_TIMER,100);//TODO maybe a constructor with included the start function
-					HandleTimer.addTimer(t);//TODO //start send again timer 100 ms
-					int result = SunSpotUtil.getLightAvg();//reading the light sensors
-					out = new Message(getMySender(),receiver,Message.Reading+result);
-					communicate.sendRemoteMessage(out);
-					this.currentState= this.send;
-				}
-				else
-					if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
-					{
-						out = new Message(getMySender(),msg.getSender(),Message.SenderDisconnect);
-						communicate.sendRemoteMessage(out);
-						SunSpotUtil.blinkLeds();
-						this.currentState=this.ready;
-					}
-					else 
-						if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
+		Message msg;
+		if(!this.inputQueue.isEmpty())//if the queue of input messages is not empty 
+		{
+			msg = (Message)this.inputQueue.get();
+			//if the current state is not the wait and the msg is I can Display your reading
+			if(this.currentState.getName().compareTo(WAIT_ST)!=0 && msg.getContent().compareTo(Message.ICanDisplayReadings)==0)
+			{
+				//send Denied Message
+				out = new Message(getMySender(),msg.getSender(),Message.Denied);
+				communicate.sendRemoteMessage(out);
+			}
+			else
+			{
+				switch(this.currentState.getIdName())//switch state
+				{	
+					case 1://ready status
+						if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
 						{
-							if(receiver.compareTo(msg.getReceiver())==0)//if I receive the disconnect from my receiver
-							{
-								HandleTimer.removeTimer(this.createTimer(SEND_AGAIN_TIMER));//TODO stop timer send again
-								SunSpotUtil.blinkLeds();
-								this.currentState=this.ready;
-							}
+							SpotTimer t =this.createTimer(GIVE_UP_TIMER,500);//TODO maybe a constructor with included the start function
+							HandleTimer.addTimer(t);//TODO set up timer 500 ms
+							out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
+							communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
+							this.currentState=this.wait_resp;//chenge the status in wait
 						}
-				break;	
+						break;
+					case 2://wait_response
+						if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
+						{
+							out = new Message(getMySender(),msg.getSender(),Message.Approved);
+							communicate.sendRemoteMessage(out);//sending approved message
+							receiver = msg.getSender();//
+							HandleTimer.removeTimer(this.createTimer(GIVE_UP_TIMER));//stopping the giveup timer
+							SpotTimer t =this.createTimer(SEND_AGAIN_TIMER,100);// start timer
+							HandleTimer.addTimer(t);
+							this.currentState=this.send;//change status in sending
+						}
+						/*else 
+						if(msg.getContent().compareTo(Message.Timeout+GIVE_UP_TIMER)==0)//TODO give up timer
+						{
+							SunSpotUtil.blinkLeds();
+							this.currentState=this.ready;
+						}*/
+						break;
+					case 3://sending
+						
+						/*if(msg.getContent().compareTo(Message.Timeout+SEND_AGAIN_TIMER)==0)//TODO send again timer
+						{
+							SpotTimer t = this.createTimer(SEND_AGAIN_TIMER,100);
+							HandleTimer.addTimer(t);//start send again timer 100 ms
+							int result = SunSpotUtil.getLightAvg();//reading the light sensors
+							out = new Message(getMySender(),receiver,Message.Reading+result);
+							communicate.sendRemoteMessage(out);
+							this.currentState= this.send;
+						}
+						else*/
+							if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
+							{
+								out = new Message(getMySender(),msg.getSender(),Message.SenderDisconnect);
+								communicate.sendRemoteMessage(out);
+								SunSpotUtil.blinkLeds();
+								this.currentState=this.ready;//change the status
+							}
+							else 
+								if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
+								{
+									if(receiver.compareTo(msg.getReceiver())==0)//if I receive the disconnect from my receiver
+									{
+										HandleTimer.removeTimer(this.createTimer(SEND_AGAIN_TIMER));// stop timer send again
+										SunSpotUtil.blinkLeds();
+										this.currentState=this.ready;//change the status
+									}
+								}
+						break;	
+				}
+			}
 		}
 	}
-
 }
