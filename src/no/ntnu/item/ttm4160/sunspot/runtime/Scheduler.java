@@ -6,6 +6,7 @@ import com.sun.spot.util.Utils;
 import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.ICommunicationLayerListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
+import no.ntnu.item.ttm4160.sunspot.fsm.StateMachine;
 
 public class Scheduler implements ICommunicationLayerListener {
     
@@ -14,6 +15,15 @@ public class Scheduler implements ICommunicationLayerListener {
 
 	}
 	
+	public void assFSM(StateMachine stateMachine)
+	{
+		
+	}
+	
+	public void execute()
+	{
+		
+	}
 	
 	public void inputReceived(Message msg) {
 		// TODO Auto-generated method stub
