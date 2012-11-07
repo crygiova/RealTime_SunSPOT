@@ -39,9 +39,7 @@ public class Scheduler implements ICommunicationLayerListener {
 		if(msg.getContent().compareTo(Message.Approved)==0)
 		{
 			System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver()+" Sender: "+msg.getSender());
-			
 		}
-		
 	}
 	
 	public String toString()
