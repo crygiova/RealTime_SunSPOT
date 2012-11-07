@@ -23,10 +23,7 @@ public class Message {
 	public static String Denied="denied";
 	public static String Reading="reading:";	//add value after ":". Example content: "reading:150" 
 	public static String SenderDisconnect="sender disconnect";
-	public static String ReceiverDisconnect="receiver disconnect";
-	
-	public static String Timeout = "timeout:";
-	
+	public static String ReceiverDisconnect="receiver disconnect";	
 	
 	
 	//Addressing

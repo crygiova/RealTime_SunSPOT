@@ -94,25 +94,10 @@ public class ServerFSM extends StateMachine {
 							HandleTimer.addTimer(t);
 							this.currentState=this.send;//change status in sending
 						}
-						/*else 
-						if(msg.getContent().compareTo(Message.Timeout+GIVE_UP_TIMER)==0)//TODO give up timer
-						{
-							SunSpotUtil.blinkLeds();
-							this.currentState=this.ready;
-						}*/
+						
 						break;
 					case 3://sending
 						
-						/*if(msg.getContent().compareTo(Message.Timeout+SEND_AGAIN_TIMER)==0)//TODO send again timer
-						{
-							SpotTimer t = this.createTimer(SEND_AGAIN_TIMER,100);
-							HandleTimer.addTimer(t);//start send again timer 100 ms
-							int result = SunSpotUtil.getLightAvg();//reading the light sensors
-							out = new Message(getMySender(),receiver,Message.Reading+result);
-							communicate.sendRemoteMessage(out);
-							this.currentState= this.send;
-						}
-						else*/
 							if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
 							{
 								out = new Message(getMySender(),msg.getSender(),Message.SenderDisconnect);
@@ -134,5 +119,39 @@ public class ServerFSM extends StateMachine {
 				}
 			}
 		}
+	}
+
+	public void timeoutTimer(SpotTimer timeout) throws IOException 
+	{
+		switch(this.currentState.getIdName())
+		{
+			case 1://ready status
+				break;
+			case 2://wait response
+				if(timeout.getPID().compareTo(this.ID)==0)
+				{
+					if(timeout.getTID().compareTo(GIVE_UP_TIMER)==0)//if is a giveup timer
+					{
+						SunSpotUtil.blinkLeds();//blink leds
+						this.currentState= this.ready;//go in ready status
+					}
+				}
+				break;
+			case 3://sending
+				if(timeout.getPID().compareTo(this.ID)==0)
+				{
+					if(timeout.getTID().compareTo(SEND_AGAIN_TIMER)==0)
+					{
+						SpotTimer t = this.createTimer(SEND_AGAIN_TIMER,100);
+						HandleTimer.addTimer(t);//start send again timer 100 ms
+						int result = SunSpotUtil.getLightAvg();//reading the light sensors
+						Message out = new Message(getMySender(),receiver,Message.Reading+result);
+						communicate.sendRemoteMessage(out);
+						this.currentState= this.send;
+					}
+				}
+				break;
+		}
+		
 	}
 }

@@ -92,6 +92,8 @@ public abstract class StateMachine {
 	 */
 	public abstract void transition() throws IOException;
 	
+	public abstract void timeoutTimer(SpotTimer timeout) throws IOException;
+	
 	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID should be a final variable in each the FSM,bc we know the names of our timers
 	{
 		return new SpotTimer(this.ID,timerID);
