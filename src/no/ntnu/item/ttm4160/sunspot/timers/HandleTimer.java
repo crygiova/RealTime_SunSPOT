@@ -39,7 +39,8 @@ public class HandleTimer {
 	/*
 	 * This method return null if the Vector is empty or the is no any Timer which is expired. Otherwise it will return SpotTimer. 
 	 */
-	public static SpotTimer isTimeExpiured(){
+	public static SpotTimer isTimeExpiured()
+	{
 		long currentTime = System.currentTimeMillis();
 		
 		if (activeTimers.size() == 0){
