@@ -5,15 +5,12 @@ package no.ntnu.item.ttm4160.sunspot.communication;
 
 import java.util.Vector;
 
-import no.ntnu.item.ttm4160.sunspot.fsm.StateMachine;
 import no.ntnu.item.ttm4160.sunspot.runtime.Scheduler;
 import no.ntnu.item.ttm4160.sunspot.*;
-import com.sun.spot.peripheral.Spot;
 import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.sensorboard.peripheral.ISwitch;
 import com.sun.spot.sensorboard.peripheral.ISwitchListener;
-import com.sun.spot.sensorboard.peripheral.LEDColor;
-import com.sun.spot.util.IEEEAddress;
+
 
 /**
  * @author christiangiovanelli
@@ -26,7 +23,7 @@ public class ButtonListener implements ISwitchListener {
 	private static ISwitch[] button = EDemoBoard.getInstance().getSwitches();
 	private static Message msg;
 	
-	private static Scheduler s;
+	private Scheduler scheduler;
 	/**
 	 * @see com.sun.spot.sensorboard.peripheral.ISwitchListener#switchPressed(com.sun.spot.sensorboard.peripheral.ISwitch)
 	 */
@@ -40,7 +37,7 @@ public class ButtonListener implements ISwitchListener {
 				//printf if a FSM is subscribed
 				//System.out.println(receiver+"  btn1");
 				msg = new Message("",receiver,Message.button1Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt1pressed
-				s.inputReceived(msg);//just call the scheduler function
+				scheduler.inputReceived(msg);//just call the scheduler function
 			}
 		}
 		else //button 2 pressed
@@ -51,14 +48,14 @@ public class ButtonListener implements ISwitchListener {
 				//printf if a FSM is subscribed
 				//System.out.println(receiver+"  btn2");
 				msg = new Message("",receiver,Message.button2Pressed);//for every FSM subscribed I crate a msg with empty sender, receiver with just the PID and the conten bt2pressed
-				s.inputReceived(msg);
+				scheduler.inputReceived(msg);
 			}
 		}
 	}
 	//the scheduler should register to receive the messages
 	public void registerAsListener(Scheduler s)
 	{
-		this.s=s;//TODO delete if using the communication
+		this.scheduler=s;
 	}
 
 	
@@ -76,7 +73,7 @@ public class ButtonListener implements ISwitchListener {
 	 * @param btn specify at wich button tha process/FSM is interested to be subscribed
 	 * @return
 	 */
-	public boolean subscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
+	public boolean subscribe(String PID,ISwitch btn)
 	{
 		if(btn.equals(button[0])) //button 1
 		{
@@ -103,7 +100,7 @@ public class ButtonListener implements ISwitchListener {
 	 * 
 	 * @return
 	 */
-	public boolean unsubscribe(String PID,ISwitch btn)//TODO not static pass to the init of a FSM the btn listener
+	public boolean unsubscribe(String PID,ISwitch btn)
 	{
 		if(btn.equals(button[0])) //button 1
 		{

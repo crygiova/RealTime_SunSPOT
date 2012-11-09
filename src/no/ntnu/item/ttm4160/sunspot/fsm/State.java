@@ -8,14 +8,17 @@ package no.ntnu.item.ttm4160.sunspot.fsm;
  *
  */
 class State {
-	/**This variable rappresent the stases of a FSM*/
+	/**This variable rappresent the stases of a FSM
+	 * we have rapresent a state with a name and a number
+	 * */
+	//name of the State
 	private String name;
+	//number of the state
 	private int idName;
 	/**
 	 * @param name of the status
 	 * */
 	public State(String name,int idName) {
-		// TODO Auto-generated constructor stub
 		this.setName(name);
 		this.setIdName(idName);
 	}

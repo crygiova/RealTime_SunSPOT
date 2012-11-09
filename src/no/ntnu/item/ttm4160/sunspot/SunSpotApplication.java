@@ -30,20 +30,13 @@ import javax.microedition.midlet.MIDletStateChangeException;
 
 import no.ntnu.item.ttm4160.sunspot.communication.ButtonListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Communications;
-import no.ntnu.item.ttm4160.sunspot.communication.Message;
+
 import no.ntnu.item.ttm4160.sunspot.fsm.ClientFSM;
 import no.ntnu.item.ttm4160.sunspot.fsm.ServerFSM;
 import no.ntnu.item.ttm4160.sunspot.runtime.Scheduler;
 
-import com.sun.spot.peripheral.Spot;
 import com.sun.spot.sensorboard.EDemoBoard;
-import com.sun.spot.sensorboard.peripheral.ITriColorLED;
-import com.sun.spot.sensorboard.peripheral.LEDColor;
-import com.sun.spot.sensorboard.peripheral.LightSensor;
-import com.sun.spot.sensorboard.peripheral.Switch;
 import com.sun.spot.util.BootloaderListener;
-import com.sun.spot.util.IEEEAddress;
-import com.sun.spot.util.Utils;
 
 /*
  * The startApp method of this class is called by the VM to start the
@@ -56,7 +49,6 @@ public class SunSpotApplication extends MIDlet {
 	
 	/**Scheduler*/
 	Scheduler scheduler;
-	private static ITriColorLED [] leds = EDemoBoard.getInstance().getLEDs();
 	/**Button Listener*/
 	private static  ButtonListener btnL = new ButtonListener();
 	/**Server FSM*/
@@ -81,78 +73,18 @@ public class SunSpotApplication extends MIDlet {
 	    //registration of the scheduler as a communication listener
 	    communicate.registerListener(scheduler);
 	    
-	    btnL.registerAsListener(scheduler);//Registration of the Scheduler as a listener of the messages of the ButtonListener
+	  	//Registration of the Scheduler as a listener of the messages of the ButtonListener
+	    btnL.registerAsListener(scheduler);
+	    //creating the 2 FSM and adding them to the Scheduler
 	    serverFSM = new ServerFSM(getFsmID(),btnL,communicate);
 	    scheduler.assFSM(serverFSM);//*/
 	    clientFSM = new ClientFSM(getFsmID(),btnL,communicate);
 	    scheduler.assFSM(clientFSM);//*/
-	    System.out.println("Number of state machine: "+scheduler.getNumStateMachine());
+	    
 	    try {
+	    	//execution of the Scheduler
 			scheduler.execute();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-	    //TEST of sending, delete it for the client and add it for the server SUNSPOT for testing
-	   /* while(true)
-	    {
-	    	Utils.sleep(3000);
-	    	System.out.println("Sending");
-	    	Message out = new Message(SunSpotUtil.getMyMac(),Message.BROADCAST_ADDRESS,Message.Approved);//editing the msn of can u display my readings
-			communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
-	    }
-	    
-	    
-	    
-	    /*
-         * Instantiate the scheduler and the state machines, then start the scheduler.
-/*         */
-        
-  /*      Scheduler s = new Scheduler();
-        FSMClient client = new FSMClient("name");
-        
-        
-        
-        
-        s.addFSM(client);
-        
-        s.loopfunction();
-     */  
-        
-        /*ButtonListener btn = new ButtonListener();
-        EDemoBoard.getInstance().getSwitches()[0].addISwitchListener(btn); 
-        EDemoBoard.getInstance().getSwitches()[1].addISwitchListener(btn);//registration of the liestener
-*/
-       /* while(true)
-        {
-        	btn.switchPressed(EDemoBoard.getInstance().getSwitches()[0]);
-        }
-       /* while(true)
-        {
-        	int avg=500;
-        	Utils.sleep(1000);
-        	SunSpotUtil.blinkLeds();
-        	Utils.sleep(1000);
-     /*   	try {
-        		avg=SunSpotUtil.getLightAvg();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	SunSpotUtil.lightToLeds(avg);
-      	
-        	for(int i = 0;i<8;i++)
-        	{
-            	Utils.sleep(3000);
-            //	SunSpotUtil.clearLeds();
-            	SunSpotUtil.testMethod(i);
-            	Utils.sleep(1000);
-        	}
-        	
-        }*/
-        
-        
+			} catch (IOException e) {e.printStackTrace();}
     }
     
     

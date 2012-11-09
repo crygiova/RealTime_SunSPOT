@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import com.sun.spot.peripheral.Spot;
 import com.sun.spot.sensorboard.EDemoBoard;
+import com.sun.spot.sensorboard.peripheral.ISwitch;
 import com.sun.spot.sensorboard.peripheral.ITriColorLED;
 import com.sun.spot.sensorboard.peripheral.LEDColor;
 import com.sun.spot.sensorboard.peripheral.LightSensor;
@@ -164,6 +165,18 @@ public class SunSpotUtil {
 	public static String getMyMac()
 	{
 		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex();
+	}
+	
+	public static ISwitch getButton(int number)
+	{
+		if(number ==0)
+		{
+			return EDemoBoard.getInstance().getSwitches()[0];
+		}
+		else
+		{
+			return EDemoBoard.getInstance().getSwitches()[1];
+		}
 	}
 }
 

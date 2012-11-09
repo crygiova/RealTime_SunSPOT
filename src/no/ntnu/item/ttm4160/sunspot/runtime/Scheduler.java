@@ -6,7 +6,7 @@ import java.util.Vector;
 
 import com.sun.spot.util.Utils;
 
-import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
+
 import no.ntnu.item.ttm4160.sunspot.communication.ICommunicationLayerListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 import no.ntnu.item.ttm4160.sunspot.fsm.StateMachine;
@@ -38,7 +38,7 @@ public class Scheduler implements ICommunicationLayerListener {
 	public void execute() throws IOException
 	{ 	SpotTimer timerExp;//rapresent the expired timers
 		while(true)
-		{//TODO change this now is just for testing
+		{
 			timerExp = HandleTimer.isTimeExpired();
 			if(timerExp!=null) //if there's a timer expired
 			{
@@ -63,7 +63,7 @@ public class Scheduler implements ICommunicationLayerListener {
 	}
 	
 	
-	/****************************************************************************************************
+	/**
 	 * this method is called only for outside messages and button messages
 	 * 
 	 * every message has a proper receiver, just for the broadcast messages u have to forwad them to al FSM
@@ -95,20 +95,6 @@ public class Scheduler implements ICommunicationLayerListener {
 			{
 				System.out.println("FSM not found, Receiver : "+ msg.getReceiverFSM());
 			}
-			
-			/*if(msg.getContent().compareTo(Message.button1Pressed)==0)
-			{
-				System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver());
-			}
-			if(msg.getContent().compareTo(Message.button2Pressed)==0)
-			{
-				System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver());
-			}
-			/*if(msg.getContent().compareTo(Message.Approved)==0)
-			{
-				System.out.println("Scheduler : InputRecived : "+msg.getContent()+" Receiver: "+msg.getReceiver()+" Sender: "+msg.getSender());
-			}
-			*/
 		}
 	}
 	

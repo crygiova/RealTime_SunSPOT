@@ -9,8 +9,6 @@ import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.*;
 import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
 
-import com.sun.spot.peripheral.Spot;
-import com.sun.spot.util.IEEEAddress;
 import com.sun.spot.util.Queue;
 
 /**
@@ -23,15 +21,21 @@ public abstract class StateMachine {
 	
 	protected final State initialState = new State(INIT_ST,0);
 	
+	/**Id of the FSM*/
 	protected String ID;
+	/**Input Queue*/
 	protected Queue inputQueue;
+	/**Save messages Queue*/
 	protected Queue saveMsgQueue;
+	/**Current state*/
 	protected State currentState;
+	/**Communication object*/
 	protected Communications communicate; 
 	
 	
 	public StateMachine()
 	{
+		//initializing the queues
 		inputQueue= new Queue();
 		saveMsgQueue= new Queue();
 	}
@@ -102,13 +106,13 @@ public abstract class StateMachine {
 	
 	public abstract void timeoutTimer(SpotTimer timeout) throws IOException;
 	
-	protected SpotTimer createTimer(String timerID)//TODO I think that timer ID should be a final variable in each the FSM,bc we know the names of our timers
+	protected SpotTimer createTimer(String timerID)
 	{
 		return new SpotTimer(this.ID,timerID);
 		
 	}
 	
-	protected SpotTimer createTimer(String timerID,long delay)//TODO I think that timer ID should be a final variable in each the FSM,bc we know the names of our timers
+	protected SpotTimer createTimer(String timerID,long delay)
 	{
 		return new SpotTimer(this.ID,timerID,delay);
 		
