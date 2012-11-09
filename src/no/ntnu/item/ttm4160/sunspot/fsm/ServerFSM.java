@@ -22,15 +22,17 @@ import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
  */
 public class ServerFSM extends StateMachine {
 
-	
+	//Id of the ready status
 	private final String READY_ST = "ready";
+	//Id of the wait response status
 	private final String WAIT_ST = "wait_response";
+	//Id of the sending status
 	private final String SEND_ST = "sending";
 	
 	private final String GIVE_UP_TIMER= "giveUpTimer";
 	private final String SEND_AGAIN_TIMER= "sendAgainTimer";
-	private final int TIME_OF_GIVE_UP_TIMER = 2000;
-	private final int TIME_OF_SEND_AGAIN_TIMER = 400;
+	private final int TIME_OF_GIVE_UP_TIMER = 5000;
+	private final int TIME_OF_SEND_AGAIN_TIMER = 100;
 	
 	private State ready;
 	private State wait_resp;
@@ -81,22 +83,22 @@ public class ServerFSM extends StateMachine {
 				{	
 					
 					case 1://ready status
-						System.out.println("Server,STATE:"+this.currentState.toString());
-						System.out.println("Server: msg: "+msg.getContent());
+						//System.out.println("Server,STATE:"+this.currentState.toString());
+						//System.out.println("Server: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
 						{
 							
-							giveUp =this.createTimer(GIVE_UP_TIMER,TIME_OF_GIVE_UP_TIMER);//TODO maybe a constructor with included the start function
+							giveUp =this.createTimer(GIVE_UP_TIMER,TIME_OF_GIVE_UP_TIMER);
 							HandleTimer.addTimer(giveUp);//TODO set up timer 500 ms
 							out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
 							communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
 							this.currentState=this.wait_resp;//chenge the status in wait
 						}
-						System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
+						//System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
 						break;
 					case 2://wait_response
-						System.out.println("Server,STATE:"+this.currentState.toString());
-						System.out.println("Server: msg: "+msg.getContent());
+						//System.out.println("Server,STATE:"+this.currentState.toString());
+						//System.out.println("Server: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
 						{
 							out = new Message(getMySender(),msg.getSender(),Message.Approved);
@@ -107,14 +109,13 @@ public class ServerFSM extends StateMachine {
 							HandleTimer.addTimer(sendAgain);
 							this.currentState=this.send;//change status in sending
 						}
-						System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
+					//	System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
 						break;
 					case 3://sending
-						System.out.println("Server,STATE:"+this.currentState.toString());
-						System.out.println("Server: msg: "+msg.getContent());
+						//System.out.println("Server,STATE:"+this.currentState.toString());
+						//System.out.println("Server: msg: "+msg.getContent());
 							if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
 							{
-								System.out.println("Server,STATE:"+this.currentState.toString());
 								out = new Message(getMySender(),receiver,Message.SenderDisconnect);
 								communicate.sendRemoteMessage(out);
 								SunSpotUtil.blinkLeds();
@@ -130,7 +131,7 @@ public class ServerFSM extends StateMachine {
 										this.currentState=this.ready;//change the status
 									}
 								}
-							System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
+						//	System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
 						break;	
 				}
 			}
@@ -149,7 +150,7 @@ public class ServerFSM extends StateMachine {
 			case 1://ready status
 				break;
 			case 2://wait response
-				System.out.println("Server Timeout,STATE:"+this.currentState.toString());
+				//System.out.println("Server Timeout,STATE:"+this.currentState.toString());
 				if(timeout.getPID().compareTo(this.ID)==0)
 				{
 					if(timeout.getTID().compareTo(GIVE_UP_TIMER)==0)//if is a giveup timer
@@ -158,10 +159,10 @@ public class ServerFSM extends StateMachine {
 						this.currentState= this.ready;//go in ready status
 					}
 				}
-				System.out.println("AfterTimeoutServer,STATE:"+this.currentState.toString());
+				//System.out.println("AfterTimeoutServer,STATE:"+this.currentState.toString());
 				break;
 			case 3://sending
-				System.out.println("Server Timeout,STATE:"+this.currentState.toString());
+				//System.out.println("Server Timeout,STATE:"+this.currentState.toString());
 				if(timeout.getPID().compareTo(this.ID)==0)
 				{
 					if(timeout.getTID().compareTo(SEND_AGAIN_TIMER)==0)
@@ -170,7 +171,7 @@ public class ServerFSM extends StateMachine {
 						HandleTimer.addTimer(sendAgain);//start send again timer 100 ms
 						int result = SunSpotUtil.getLightAvg();//reading the light sensors
 						Message out = new Message(getMySender(),receiver,Message.Reading+result);
-						System.out.println(Message.Reading+result);
+						//System.out.println(Message.Reading+result);
 						communicate.sendRemoteMessage(out);
 						this.currentState= this.send;
 					}

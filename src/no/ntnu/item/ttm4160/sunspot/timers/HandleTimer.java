@@ -14,29 +14,35 @@ public class HandleTimer {
 	
 	public static void addTimer(SpotTimer spotTimer)
 	{
-		System.out.println("ADDDING TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID());
+		//System.out.println("ADDDING TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID()+" activeTimers.size: "+activeTimers.size());
 		long timeOut = spotTimer.getTimeout();
+		boolean found= false;
 		if (activeTimers.size() < 1){
 			activeTimers.addElement(spotTimer);
 		}else{
-			for (int i = 0; i <= activeTimers.size();i++){
-				if(((SpotTimer)activeTimers.elementAt(i)).getTimeout() >= timeOut){
+			for (int i = 0; i < activeTimers.size() && !found;i++)
+			{
+				if(((SpotTimer)activeTimers.elementAt(i)).getTimeout() >= timeOut)
+				{
 					activeTimers.insertElementAt(spotTimer, i);
-					break;
-				}else if (activeTimers.size() == (i+1)){
-					activeTimers.addElement(spotTimer);
+					found=true;		
 				}
-					
+			}
+			if (!found)
+			{
+				activeTimers.addElement(spotTimer);
 			}
 		}
+		//System.out.println("ADDDING TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID()+" activeTimers.size: "+activeTimers.size());
 		//System.out.println("TIMER-ADDED TID: "+spotTimer.getTID()+" PID: "+spotTimer.getPID());
 	}
 	
 	
 	public static void removeTimer(SpotTimer spotTimer)
 	{	//System.out.println("$$$$"+activeTimers.size());	
-		System.out.println("Removing TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID()+" activeTimers.size: "+activeTimers.size());
+		//System.out.println("Removing TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID()+" activeTimers.size: "+activeTimers.size());
 		activeTimers.removeElement(spotTimer);
+		//System.out.println("Removing TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID()+" activeTimers.size: "+activeTimers.size());
 		//System.out.println("$$$$"+activeTimers.size());
 	}
 	

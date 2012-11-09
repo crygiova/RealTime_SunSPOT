@@ -25,7 +25,7 @@ public class ClientFSM extends StateMachine {
 	private final String BUSY_ST="busy";
 	
 	private final String TIMEOUT_TIMER= "timeoutTimer";
-	private final int TIME_OF_TIMEOUT_TIMER = 10000;
+	private final int TIME_OF_TIMEOUT_TIMER = 5000;
 	
 	private State free;
 	private State wait_app;
@@ -103,11 +103,11 @@ public class ClientFSM extends StateMachine {
 							communicate.sendRemoteMessage(out);//sending the out message
 							this.currentState=this.wait_app;
 						}
-						System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
+						//System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
 						break;
 					case 2://wait approved status
-						System.out.println("Client,STATE:"+this.currentState.toString());
-						System.out.println("Client: msg: "+msg.getContent());
+						//System.out.println("Client,STATE:"+this.currentState.toString());
+						//System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.Approved)==0)
 						{
 							timeout = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
@@ -127,11 +127,11 @@ public class ClientFSM extends StateMachine {
 									this.saveMsgQueue.put(msg);//put in the save message queue the msg
 							}
 						}
-						System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
+					//	System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
 						break;
 					case 3://busy status
-						System.out.println("Client,STATE:"+this.currentState.toString());
-						System.out.println("Client: msg: "+msg.getContent());
+						//System.out.println("Client,STATE:"+this.currentState.toString());
+						//System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.SenderDisconnect)==0)//if sender disconnect
 						{
 							if(msg.getSender().compareTo(receiver)==0)
@@ -162,7 +162,7 @@ public class ClientFSM extends StateMachine {
 								if(msg.getContent().startsWith(Message.Reading))//if is reading msg
 								{
 									int result = Integer.parseInt(msg.getContent().substring(indexMsg+1, msg.getContent().length()));//verifica che il meno uno que sia corretto quando estrai il number
-									System.out.println(result);
+									//System.out.println(result);
 									SunSpotUtil.lightToLeds(result);//TODO display
 									//RESET THE TIMER, TAKE IT OFF AND PUT IT AGAIN
 									HandleTimer.removeTimer(timeout);//stop timer TIMEOUT TIMER
@@ -172,7 +172,7 @@ public class ClientFSM extends StateMachine {
 								}
 							}
 						}
-						System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
+					//	System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
 						break;
 				}
 			}
@@ -190,8 +190,7 @@ public class ClientFSM extends StateMachine {
 			case 2://wait approved
 				break;
 			case 3://busy status
-				System.out.println("********************************************************************");
-				System.out.println("Server Timeout,STATE:"+this.currentState.toString());
+				//System.out.println("Client Timeout,STATE:"+this.currentState.toString());
 				if(timeout.getPID().compareTo(this.ID)==0)//if is a timeout with my ID
 				{
 					if(timeout.getTID().compareTo(TIMEOUT_TIMER)==0)//if it's a timeout timer
@@ -199,8 +198,7 @@ public class ClientFSM extends StateMachine {
 						this.currentState= this.free;
 					}
 				}
-				System.out.println("Server Timeout,STATE:"+this.currentState.toString());
-				System.out.println("********************************************************************");
+				//System.out.println("Client Timeout,STATE:"+this.currentState.toString());
 				break;
 		}
 	}
