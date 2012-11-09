@@ -32,6 +32,8 @@ public class ClientFSM extends StateMachine {
 	private State busy;
 
 	private String receiver;
+	
+	private SpotTimer timeout;
 
 	/**
 	 * 
@@ -108,8 +110,8 @@ public class ClientFSM extends StateMachine {
 						System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.Approved)==0)
 						{
-							SpotTimer t = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
-							HandleTimer.addTimer(t);// start timeout
+							timeout = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
+							HandleTimer.addTimer(timeout);// start timeout
 							this.currentState = this.busy;
 							receiver = msg.getSender();
 						}
@@ -134,7 +136,7 @@ public class ClientFSM extends StateMachine {
 						{
 							if(msg.getSender().compareTo(receiver)==0)
 							{
-								HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//TODO stop timer TIMEOUT TIMER
+								HandleTimer.removeTimer(timeout);//TODO stop timer TIMEOUT TIMER
 								SunSpotUtil.blinkLeds();
 								this.currentState=this.free;
 							}
@@ -142,7 +144,7 @@ public class ClientFSM extends StateMachine {
 						else if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
 						{
 							// ReceiverDisconnect message
-							HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));// stop timer TIMEOUT TIMER
+							HandleTimer.removeTimer(timeout);// stop timer TIMEOUT TIMER
 							
 							out = new Message(getMySender(),receiver,Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
 							communicate.sendRemoteMessage(out);//sending the out message
@@ -163,9 +165,9 @@ public class ClientFSM extends StateMachine {
 									System.out.println(result);
 									SunSpotUtil.lightToLeds(result);//TODO display
 									//RESET THE TIMER, TAKE IT OFF AND PUT IT AGAIN
-									HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//stop timer TIMEOUT TIMER
-									SpotTimer t = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
-									HandleTimer.addTimer(t);// start timeout
+									HandleTimer.removeTimer(timeout);//stop timer TIMEOUT TIMER
+									timeout = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
+									HandleTimer.addTimer(timeout);// start timeout
 									this.currentState=this.busy;
 								}
 							}

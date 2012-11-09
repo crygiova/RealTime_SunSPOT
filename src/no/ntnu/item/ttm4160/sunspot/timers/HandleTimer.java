@@ -14,6 +14,7 @@ public class HandleTimer {
 	
 	public static void addTimer(SpotTimer spotTimer)
 	{
+		System.out.println("ADDDING TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID());
 		long timeOut = spotTimer.getTimeout();
 		if (activeTimers.size() < 1){
 			activeTimers.addElement(spotTimer);
@@ -33,10 +34,12 @@ public class HandleTimer {
 	
 	
 	public static void removeTimer(SpotTimer spotTimer)
-	{	System.out.println("$$$$"+activeTimers.size());		
+	{	//System.out.println("$$$$"+activeTimers.size());	
+		System.out.println("Removing TIMER "+spotTimer.getTID()+" Machine"+spotTimer.getPID()+" activeTimers.size: "+activeTimers.size());
 		activeTimers.removeElement(spotTimer);
-		System.out.println("$$$$"+activeTimers.size());
+		//System.out.println("$$$$"+activeTimers.size());
 	}
+	
 	
 	/*
 	 * This method return null if the Vector is empty or the is no any Timer which is expired. Otherwise it will return SpotTimer. 

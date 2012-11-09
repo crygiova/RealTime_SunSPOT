@@ -57,7 +57,7 @@ public class Scheduler implements ICommunicationLayerListener {
 			{
 				((StateMachine)stMachines.elementAt(j)).transition();
 			}
-			Utils.sleep(500);
+//			Utils.sleep(500);
 		}
 		
 	}
