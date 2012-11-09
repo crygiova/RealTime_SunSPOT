@@ -118,7 +118,7 @@ public class ServerFSM extends StateMachine {
 							else 
 								if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
 								{
-									if(receiver.compareTo(msg.getReceiver())==0)//if I receive the disconnect from my receiver
+									if(receiver.compareTo(msg.getSender())==0)//if I receive the disconnect from my receiver
 									{
 										HandleTimer.removeTimer(this.createTimer(SEND_AGAIN_TIMER));// stop timer send again
 										SunSpotUtil.blinkLeds();
