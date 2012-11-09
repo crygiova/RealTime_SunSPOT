@@ -29,6 +29,12 @@ public abstract class StateMachine {
 	protected State currentState;
 	protected Communications communicate; 
 	
+	
+	public StateMachine()
+	{
+		inputQueue= new Queue();
+		saveMsgQueue= new Queue();
+	}
 	/**
 	 * @return the iD
 	 */
@@ -60,6 +66,7 @@ public abstract class StateMachine {
 	public void addInputQueue(Message msg)
 	{
 		this.inputQueue.put(msg);
+	//	System.out.println("ADD-INPUT-QUEUE: ID: "+this.ID+" Size: "+inputQueue.size());
 	}
 	
 	/**
@@ -114,8 +121,6 @@ public abstract class StateMachine {
 	protected String getMySender()
 	{
 		return SunSpotUtil.getMyMac()+":"+this.ID;
-	}
-	
-	
+	}	
 
 }

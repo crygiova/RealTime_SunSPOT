@@ -36,6 +36,7 @@ public class ClientFSM extends StateMachine {
 	 * 
 	 */
 	public ClientFSM(String iD,ButtonListener btn,Communications communicate) {
+		super();
 		//Id of the FSM
 		this.ID = iD;
 		//initialization of the States of the FSM
@@ -55,9 +56,10 @@ public class ClientFSM extends StateMachine {
 		Message out;
 		Message msg;
 		//TODO input queue & saved message queue?? take a look in the teory
-		
+		//System.out.println("CLIENTTRANSITION");
 		if(!this.saveMsgQueue.isEmpty()) //if the sved queue is not empty
 		{
+			//7System.out.println("SAVE MESSAGE IS NOT EMPTY");
 			if(this.currentState.getName().compareTo(FREE_ST)==0) //if I m in free status
 			{
 				msg = (Message)inputQueue.get();
@@ -73,13 +75,13 @@ public class ClientFSM extends StateMachine {
 		if(!this.inputQueue.isEmpty())
 		{
 			msg = (Message)inputQueue.get();
+			//System.out.println("INPUT QUEUE NOT EMPTY, CONTENT MSG: "+msg.getContent());
 		    if(this.currentState.getName().compareTo(BUSY_ST)!=0 && msg.getContent().startsWith(Message.Reading))//check the second function
 			{
 				out = new Message(getMySender(),msg.getSender(),Message.ReceiverDisconnect);
 			}
 			else
 			{
-				msg = (Message)this.inputQueue.get();
 				switch(this.currentState.getIdName())
 				{
 				
@@ -90,14 +92,19 @@ public class ClientFSM extends StateMachine {
 						}
 						else*/
 						//if we receive a Can u display message
+						System.out.println("Client,STATE:"+this.currentState.toString());
+						System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
 						{
 							out = new Message(getMySender(),msg.getSender(),Message.ICanDisplayReadings);//sending the message to response I can display ur readings
 							communicate.sendRemoteMessage(out);//sending the out message
 							this.currentState=this.wait_app;
 						}
+						System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
 						break;
 					case 2://wait approved status
+						System.out.println("Client,STATE:"+this.currentState.toString());
+						System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.Approved)==0)
 						{
 							SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
@@ -117,9 +124,11 @@ public class ClientFSM extends StateMachine {
 									this.saveMsgQueue.put(msg);//put in the save message queue the msg
 							}
 						}
+						System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
 						break;
 					case 3://busy status
-						
+						System.out.println("Client,STATE:"+this.currentState.toString());
+						System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.SenderDisconnect)==0)//if sender disconnect
 						{
 							if(msg.getSender().compareTo(receiver)==0)
@@ -134,7 +143,7 @@ public class ClientFSM extends StateMachine {
 							// ReceiverDisconnect message
 							HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));// stop timer TIMEOUT TIMER
 							
-							out = new Message(getMySender(),msg.getSender(),Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
+							out = new Message(getMySender(),receiver,Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
 							communicate.sendRemoteMessage(out);//sending the out message
 							SunSpotUtil.blinkLeds();//blinking leds
 							this.currentState= this.free;//status free
@@ -160,11 +169,13 @@ public class ClientFSM extends StateMachine {
 								}
 							}
 						}
+						System.out.println("AfterTransitionClient,STATE:"+this.currentState.toString());
 						break;
 				}
 			}
 					
 		}
+		//System.out.println("ClientTransition is made");
 	}
 
 	public void timeoutTimer(SpotTimer timeout) 

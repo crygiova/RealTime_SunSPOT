@@ -82,13 +82,20 @@ public class SunSpotApplication extends MIDlet {
 	    communicate.registerListener(scheduler);
 	    
 	    btnL.registerAsListener(scheduler);//Registration of the Scheduler as a listener of the messages of the ButtonListener
-	    serverFSM = new ServerFSM(getFsmID(),btnL,communicate);
+	    /*serverFSM = new ServerFSM(getFsmID(),btnL,communicate);
+	    scheduler.assFSM(serverFSM);//*/
 	    clientFSM = new ClientFSM(getFsmID(),btnL,communicate);
-	    scheduler.assFSM(serverFSM);
-	    scheduler.assFSM(clientFSM);
-	    scheduler.execute();
+	    scheduler.assFSM(clientFSM);//*/
+	    System.out.println("Number of state machine: "+scheduler.getNumStateMachine());
+	    try {
+			scheduler.execute();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
 	    //TEST of sending, delete it for the client and add it for the server SUNSPOT for testing
-	    while(true)
+	   /* while(true)
 	    {
 	    	Utils.sleep(3000);
 	    	System.out.println("Sending");

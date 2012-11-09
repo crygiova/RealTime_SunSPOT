@@ -62,6 +62,19 @@ public class Message {
 		return receiver;
 	}
 	
+	public String getReceiverFSM()
+	{
+		int index=receiver.indexOf(":");
+		if(index==-1){
+			//":" not found
+			return receiver;
+		}
+		else
+		{
+			return receiver.substring(index+1,receiver.length());//verify if it's working
+		}
+	}
+	
 	public String getReceiverMAC(){
 		int index=receiver.indexOf(":");
 		if(index==-1){

@@ -28,6 +28,7 @@ public class HandleTimer {
 					
 			}
 		}
+		System.out.println("TIMER-ADDED TID: "+spotTimer.getTID()+" PID: "+spotTimer.getPID());
 	}
 	
 	

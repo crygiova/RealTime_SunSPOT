@@ -41,6 +41,7 @@ public class ServerFSM extends StateMachine {
 	 */
 	public ServerFSM(String iD,ButtonListener btn,Communications communicate) 
 	{
+		super();
 		//initialization of the id 
 		this.ID = iD;//assign the id to the state machine
 		//initialization of the States of the FSM
@@ -75,16 +76,22 @@ public class ServerFSM extends StateMachine {
 				switch(this.currentState.getIdName())//switch state
 				{	
 					case 1://ready status
+						System.out.println("Server,STATE:"+this.currentState.toString());
+						System.out.println("Server: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.button1Pressed)==0)//button 1 pressed
 						{
+							
 							SpotTimer t =this.createTimer(GIVE_UP_TIMER,500);//TODO maybe a constructor with included the start function
 							HandleTimer.addTimer(t);//TODO set up timer 500 ms
 							out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
 							communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
 							this.currentState=this.wait_resp;//chenge the status in wait
 						}
+						System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
 						break;
 					case 2://wait_response
+						System.out.println("Server,STATE:"+this.currentState.toString());
+						System.out.println("Server: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)//I can display u readings
 						{
 							out = new Message(getMySender(),msg.getSender(),Message.Approved);
@@ -95,13 +102,15 @@ public class ServerFSM extends StateMachine {
 							HandleTimer.addTimer(t);
 							this.currentState=this.send;//change status in sending
 						}
-						
+						System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
 						break;
 					case 3://sending
-						
+						System.out.println("Server,STATE:"+this.currentState.toString());
+						System.out.println("Server: msg: "+msg.getContent());
 							if(msg.getContent().compareTo(Message.button2Pressed)==0)//button 2 pressed
 							{
-								out = new Message(getMySender(),msg.getSender(),Message.SenderDisconnect);
+								System.out.println("Server,STATE:"+this.currentState.toString());
+								out = new Message(getMySender(),receiver,Message.SenderDisconnect);
 								communicate.sendRemoteMessage(out);
 								SunSpotUtil.blinkLeds();
 								this.currentState=this.ready;//change the status
@@ -116,9 +125,14 @@ public class ServerFSM extends StateMachine {
 										this.currentState=this.ready;//change the status
 									}
 								}
+							System.out.println("AfterTRansitionServer,STATE:"+this.currentState.toString());
 						break;	
 				}
 			}
+		}
+		else//if the input queue is empty
+		{
+			
 		}
 	}
 

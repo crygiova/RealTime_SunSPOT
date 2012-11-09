@@ -47,4 +47,8 @@ class State {
 		this.idName = idName;
 	}
 
+	public String toString()
+	{
+		return this.name;
+	}
 }

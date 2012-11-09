@@ -115,7 +115,7 @@ public class Communications implements ICommunicationLayer{
     		(RadiogramConnection)Connector.open("radiogram://"+address+":"+Message.DATAGRAM_PORT); 
     		Datagram dg = conn.newDatagram(conn.getMaximumLength()); 
     		try { 
-    			System.out.println("Sending datagram: "+message);
+    		//	System.out.println("Sending datagram: "+message);
     		 dg.writeUTF(message.serializeMessage()); 
     		 conn.send(dg); 
     		} catch (NoRouteException e) { 
@@ -154,7 +154,7 @@ public class Communications implements ICommunicationLayer{
         			Datagram dg = dgConn.newDatagram(dgConn.getMaximumLength());
         			dgConn.receive(dg); 
         	    	String rawString = dg.readUTF(); 
-        	    	System.out.println("Received datagram: "+rawString);
+        	    	//System.out.println("Received datagram: "+rawString);
         	    	Message msg=Message.deSerializeMessage(rawString);
         	    //	System.out.println("Message Deserialized");
         	    	processIncomingMessage(msg);
@@ -175,7 +175,7 @@ public class Communications implements ICommunicationLayer{
     		}
     		else if(msg.getReceiver().equals(Message.BROADCAST_ADDRESS))
     		{	
-    			System.out.println("Broadcast Message");
+    		//	System.out.println("Broadcast Message");
     			addMessage(msg);
     		}
     		else{
@@ -214,7 +214,7 @@ public class Communications implements ICommunicationLayer{
     			connectionAddress=initialMsg.getSenderMAC();
     		}
 			try {
-				System.out.println("Opening radiostream to "+connectionAddress);
+			//	System.out.println("Opening radiostream to "+connectionAddress);
 				this.radioConn=openRadiostream(connectionAddress);
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -298,7 +298,7 @@ public class Communications implements ICommunicationLayer{
 		}
 		
 		private void sendLowLevelMessage(Message msg) throws IOException{
-			System.out.println("Sending low level message on stream: "+msg);
+		//	System.out.println("Sending low level message on stream: "+msg);
 			outStream=radioConn.openDataOutputStream();
 			outStream.writeUTF(msg.serializeMessage()); 
 		    outStream.flush(); 
@@ -309,7 +309,7 @@ public class Communications implements ICommunicationLayer{
 		private void sendStreamMessage(Message msg) throws IOException{
 			if(state==STATE_ACTIVE){
 				outStream=radioConn.openDataOutputStream();
-				System.out.println("sending message on stream: "+msg);
+			//	System.out.println("sending message on stream: "+msg);
 			    outStream.writeUTF(msg.serializeMessage()); 
 			    outStream.flush(); 
 			    outStream.close();
