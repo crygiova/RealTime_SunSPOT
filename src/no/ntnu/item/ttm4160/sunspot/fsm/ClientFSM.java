@@ -25,6 +25,7 @@ public class ClientFSM extends StateMachine {
 	private final String BUSY_ST="busy";
 	
 	private final String TIMEOUT_TIMER= "timeoutTimer";
+	private final int TIME_OF_TIMEOUT_TIMER = 10000;
 	
 	private State free;
 	private State wait_app;
@@ -107,7 +108,7 @@ public class ClientFSM extends StateMachine {
 						System.out.println("Client: msg: "+msg.getContent());
 						if(msg.getContent().compareTo(Message.Approved)==0)
 						{
-							SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
+							SpotTimer t = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
 							HandleTimer.addTimer(t);// start timeout
 							this.currentState = this.busy;
 							receiver = msg.getSender();
@@ -163,7 +164,7 @@ public class ClientFSM extends StateMachine {
 									SunSpotUtil.lightToLeds(result);//TODO display
 									//RESET THE TIMER, TAKE IT OFF AND PUT IT AGAIN
 									HandleTimer.removeTimer(this.createTimer(TIMEOUT_TIMER));//stop timer TIMEOUT TIMER
-									SpotTimer t = this.createTimer(TIMEOUT_TIMER,500);
+									SpotTimer t = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
 									HandleTimer.addTimer(t);// start timeout
 									this.currentState=this.busy;
 								}
@@ -187,6 +188,8 @@ public class ClientFSM extends StateMachine {
 			case 2://wait approved
 				break;
 			case 3://busy status
+				System.out.println("********************************************************************");
+				System.out.println("Server Timeout,STATE:"+this.currentState.toString());
 				if(timeout.getPID().compareTo(this.ID)==0)//if is a timeout with my ID
 				{
 					if(timeout.getTID().compareTo(TIMEOUT_TIMER)==0)//if it's a timeout timer
@@ -194,6 +197,8 @@ public class ClientFSM extends StateMachine {
 						this.currentState= this.free;
 					}
 				}
+				System.out.println("Server Timeout,STATE:"+this.currentState.toString());
+				System.out.println("********************************************************************");
 				break;
 		}
 	}

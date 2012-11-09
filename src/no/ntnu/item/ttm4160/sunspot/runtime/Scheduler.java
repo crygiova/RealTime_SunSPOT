@@ -10,6 +10,8 @@ import no.ntnu.item.ttm4160.sunspot.SunSpotUtil;
 import no.ntnu.item.ttm4160.sunspot.communication.ICommunicationLayerListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 import no.ntnu.item.ttm4160.sunspot.fsm.StateMachine;
+import no.ntnu.item.ttm4160.sunspot.timers.HandleTimer;
+import no.ntnu.item.ttm4160.sunspot.timers.SpotTimer;
 
 public class Scheduler implements ICommunicationLayerListener {
     
@@ -34,9 +36,23 @@ public class Scheduler implements ICommunicationLayerListener {
 	/**The main method of the scheduler that has to give the resource to the FSM
 	 * @throws IOException */
 	public void execute() throws IOException
-	{
+	{ 	SpotTimer timerExp;//rapresent the expired timers
 		while(true)
 		{//TODO change this now is just for testing
+			timerExp = HandleTimer.isTimeExpired();
+			if(timerExp!=null) //if there's a timer expired
+			{
+				//System.out.print("TIMEOUT TIMER");
+				int index = existFSM(timerExp.getPID());
+				if(index!=-1) //if the FSM exist
+				{
+					//System.out.println("  Timer id:"+timerExp.getTID()+" PID: "+timerExp.getPID());
+					((StateMachine)stMachines.elementAt(index)).timeoutTimer(timerExp);
+				}
+			}
+			
+			
+			// giving te resources to the FSM
 			for(int j =0;j<stMachines.size();j++)
 			{
 				((StateMachine)stMachines.elementAt(j)).transition();
@@ -66,18 +82,18 @@ public class Scheduler implements ICommunicationLayerListener {
 				((StateMachine)stMachines.elementAt(j)).addInputQueue(msg);
 			}
 		}
-		else 
+		else //if is not a broadcast message is a message for a status machines
 		{
 			index = existFSM(msg.getReceiverFSM());
 			//verify which FSM has to receive the msg
 			if(index!=-1)
 			{
-				System.out.println("FSM found, ReceiverFSM : "+ msg.getReceiverFSM()+" Index "+index);
+				//System.out.println("FSM found, ReceiverFSM : "+ msg.getReceiverFSM()+" Index "+index);
 				((StateMachine)stMachines.elementAt(index)).addInputQueue(msg);
 			}
-			else
+			else //if i can not find a state machine
 			{
-				System.out.println("FSM not found, REceiver : "+ msg.getReceiverFSM());
+				System.out.println("FSM not found, Receiver : "+ msg.getReceiverFSM());
 			}
 			
 			/*if(msg.getContent().compareTo(Message.button1Pressed)==0)

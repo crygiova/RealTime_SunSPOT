@@ -262,7 +262,7 @@ public class Communications implements ICommunicationLayer{
 			while(keepRunning){
 				try {
 					String rawString=inStream.readUTF();
-        	    	System.out.println("Received: "+rawString);
+        	    	//System.out.println("Received: "+rawString);
         	    	Message msg=Message.deSerializeMessage(rawString);
         	    	processIncomingMessage(msg);
 				} catch (IOException e) {

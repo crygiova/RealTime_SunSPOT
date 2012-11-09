@@ -28,27 +28,32 @@ public class HandleTimer {
 					
 			}
 		}
-		System.out.println("TIMER-ADDED TID: "+spotTimer.getTID()+" PID: "+spotTimer.getPID());
+		//System.out.println("TIMER-ADDED TID: "+spotTimer.getTID()+" PID: "+spotTimer.getPID());
 	}
 	
 	
 	public static void removeTimer(SpotTimer spotTimer)
-	{	
+	{	System.out.println("$$$$"+activeTimers.size());		
 		activeTimers.removeElement(spotTimer);
+		System.out.println("$$$$"+activeTimers.size());
 	}
 	
 	/*
 	 * This method return null if the Vector is empty or the is no any Timer which is expired. Otherwise it will return SpotTimer. 
 	 */
-	public static SpotTimer isTimeExpiured()
+	public static SpotTimer isTimeExpired()
 	{
+		//System.out.println("$$$$"+activeTimers.size());
 		long currentTime = System.currentTimeMillis();
 		
 		if (activeTimers.size() == 0){
 			return null;
 		}
-		if (((SpotTimer)activeTimers.elementAt(0)).getTimeout() <= currentTime){
-			return (SpotTimer)activeTimers.elementAt(0);
+		if (((SpotTimer)activeTimers.elementAt(0)).getTimeout() <= currentTime)
+		{
+			SpotTimer timeout = (SpotTimer)activeTimers.elementAt(0);//i ll take the timer in a object
+			removeTimer(timeout);//removing the timer
+			return timeout;
 		}
 		return null;
 	}

@@ -82,7 +82,7 @@ public class SunSpotApplication extends MIDlet {
 	    communicate.registerListener(scheduler);
 	    
 	    btnL.registerAsListener(scheduler);//Registration of the Scheduler as a listener of the messages of the ButtonListener
-	   /* serverFSM = new ServerFSM(getFsmID(),btnL,communicate);
+	    serverFSM = new ServerFSM(getFsmID(),btnL,communicate);
 	    scheduler.assFSM(serverFSM);//*/
 	    clientFSM = new ClientFSM(getFsmID(),btnL,communicate);
 	    scheduler.assFSM(clientFSM);//*/
