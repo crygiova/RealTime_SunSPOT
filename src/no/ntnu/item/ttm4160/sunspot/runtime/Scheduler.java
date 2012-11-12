@@ -4,9 +4,6 @@ package no.ntnu.item.ttm4160.sunspot.runtime;
 import java.io.IOException;
 import java.util.Vector;
 
-import com.sun.spot.util.Utils;
-
-
 import no.ntnu.item.ttm4160.sunspot.communication.ICommunicationLayerListener;
 import no.ntnu.item.ttm4160.sunspot.communication.Message;
 import no.ntnu.item.ttm4160.sunspot.fsm.StateMachine;
@@ -57,7 +54,6 @@ public class Scheduler implements ICommunicationLayerListener {
 			{
 				((StateMachine)stMachines.elementAt(j)).transition();
 			}
-			Utils.sleep(500);
 		}
 		
 	}

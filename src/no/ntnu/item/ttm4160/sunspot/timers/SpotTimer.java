@@ -48,20 +48,6 @@ public class SpotTimer {
 		return true;
 	}
 	
-	public boolean reset()
-	{
-		//TODO implement
-		return true;
-	}
-	
-	public boolean stop()
-	{
-		//TODO IMPLEMENT
-		return true;
-		
-	}
-	
-	
 	/**
 	 * @return the pID
 	 */

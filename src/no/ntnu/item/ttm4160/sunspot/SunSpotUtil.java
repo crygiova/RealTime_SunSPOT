@@ -35,18 +35,18 @@ public class SunSpotUtil {
             {
             	switch(j)
             	{
-            		case 2:leds[i].setColor(LEDColor.RED);break;
+            		case 0:leds[i].setColor(LEDColor.RED);break;
             		case 1:leds[i].setColor(LEDColor.WHITE);break;
-            		case 0: leds[i].setColor(LEDColor.GREEN);break;
+            		case 2: leds[i].setColor(LEDColor.GREEN);break;
             	}
             	leds[i].setOn();
             }
-            Utils.sleep(400);
+            Utils.sleep(300);
             for (int i = 7; i >=0 ; i--)
             {
             	leds[i].setOff();
             }
-            Utils.sleep(200);           
+            Utils.sleep(50);           
         }
 	}
 	
@@ -76,11 +76,10 @@ public class SunSpotUtil {
 	{
 		int counter;
         counter = avg/84;
-        int prev=0;
         for (int i = 0; i < 8; i++) {
         	switch(counter)
         	{
-        		case 0: leds[i].setColor(LEDColor.GREEN);leds[7-i].setColor(LEDColor.RED);break;
+        		case 0: leds[i].setColor(LEDColor.BLUE);break;
         		case 1:leds[i].setColor(LEDColor.MAGENTA);break;
         		case 2:leds[i].setColor(LEDColor.WHITE);break;
         		case 3:leds[i].setColor(LEDColor.RED);break;
@@ -93,7 +92,15 @@ public class SunSpotUtil {
         	
         	if(counter==0)
         	{
-        		leds[i].setOn();
+        		if(i==0)
+        		{
+        			leds[i].setOn();
+        		}
+        		else
+        		{
+        			leds[i].setOff();
+        		}
+        	/*	leds[i].setOn();
         		leds[7-i].setOn();
         		
         		if(i==0 || i==4)
@@ -108,7 +115,7 @@ public class SunSpotUtil {
         		}
   //      		Utils.sleep(200);
         		leds[0].setOff();
-        		leds[7].setOff();
+        		leds[7].setOff();//*/
         	}
         	else
         	{
@@ -154,7 +161,7 @@ public class SunSpotUtil {
             {
             	leds[i].setOff();
             }
-            Utils.sleep(200);           
+            Utils.sleep(100);           
         }
 	}
 	
@@ -167,6 +174,10 @@ public class SunSpotUtil {
 		return new IEEEAddress(Spot.getInstance().getRadioPolicyManager().getIEEEAddress()).asDottedHex();
 	}
 	
+	/**
+	 * @param number of the button
+	 * if number =0 returns the instance of the 1st button else the second
+	 * */
 	public static ISwitch getButton(int number)
 	{
 		if(number ==0)
