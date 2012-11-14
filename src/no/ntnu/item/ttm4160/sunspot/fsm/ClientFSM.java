@@ -106,9 +106,9 @@ public class ClientFSM extends StateMachine {
 						//if we receive a Can u display message
 						if(msg.getContent().compareTo(Message.CanYouDisplayMyReadings)==0)
 						{
-							//System.out.println("RECEIVING: CAN u display my readings");
+							System.out.println("RECEIVING: CAN u display my readings");
 							out = new Message(getMySender(),msg.getSender(),Message.ICanDisplayReadings);//sending the message to response I can display ur readings
-							//System.out.println("SENDING: I caN");
+							System.out.println("SENDING: I caN");
 							communicate.sendRemoteMessage(out);//sending the out message
 							this.currentState=this.wait_app;
 						}
@@ -117,7 +117,7 @@ public class ClientFSM extends StateMachine {
 						//if the message is Approved
 						if(msg.getContent().compareTo(Message.Approved)==0)
 						{
-							//System.out.println("RECEIVING: Approved");
+							System.out.println("RECEIVING: Approved");
 							// start timeout timer
 							timeout = this.createTimer(TIMEOUT_TIMER,TIME_OF_TIMEOUT_TIMER);
 							HandleTimer.addTimer(timeout);
@@ -160,7 +160,7 @@ public class ClientFSM extends StateMachine {
 							
 							out = new Message(getMySender(),receiver,Message.ReceiverDisconnect);//sending the message to response ReceiverDisconnect
 							communicate.sendRemoteMessage(out);//sending the out message
-							//System.out.println("SENDINDg: receiver disconnect");
+							System.out.println("SENDINDg: receiver disconnect");
 							SunSpotUtil.blinkLeds();//blinking leds
 							this.currentState= this.free;//status free
 						}
