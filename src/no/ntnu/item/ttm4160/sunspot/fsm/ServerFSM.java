@@ -91,6 +91,7 @@ public class ServerFSM extends StateMachine {
 			{
 				//send Denied Message
 				out = new Message(getMySender(),msg.getSender(),Message.Denied);
+				System.out.println("SENDING: Denied");
 				communicate.sendRemoteMessage(out);
 			}
 			else
@@ -107,6 +108,7 @@ public class ServerFSM extends StateMachine {
 							HandleTimer.addTimer(giveUp);
 							//sending CanYouDisplayMyReadings
 							out = new Message(getMySender(),Message.BROADCAST_ADDRESS,Message.CanYouDisplayMyReadings);//editing the msn of can u display my readings
+							//System.out.println("SENDING: Can u display my readings??");
 							communicate.sendRemoteMessage(out);//sending a broadcast message using the receiver as a broadcast
 							this.currentState=this.wait_resp;//chenge the status in wait
 						}
@@ -115,6 +117,7 @@ public class ServerFSM extends StateMachine {
 						//I can display u readings
 						if(msg.getContent().compareTo(Message.ICanDisplayReadings)==0)
 						{
+							//System.out.println("RECEIVING: I can");
 							out = new Message(getMySender(),msg.getSender(),Message.Approved);
 							communicate.sendRemoteMessage(out);//sending approved message
 							receiver = msg.getSender();//setting the reciver in this communication
@@ -130,6 +133,7 @@ public class ServerFSM extends StateMachine {
 						if(msg.getContent().compareTo(Message.button2Pressed)==0)
 						{
 							out = new Message(getMySender(),receiver,Message.SenderDisconnect);
+							//System.out.println("SENDING: sender disconnect");
 							communicate.sendRemoteMessage(out);
 							SunSpotUtil.blinkLeds();
 							this.currentState=this.ready;//change the status
@@ -138,6 +142,7 @@ public class ServerFSM extends StateMachine {
 							//ReceiverDisconnect
 							if(msg.getContent().compareTo(Message.ReceiverDisconnect)==0)
 							{
+								//System.out.println("RECEIVING: receiver disconnect");
 								if(receiver.compareTo(msg.getSender())==0)//if I receive the disconnect from my receiver
 								{
 									HandleTimer.removeTimer(sendAgain);// stop timer send again
